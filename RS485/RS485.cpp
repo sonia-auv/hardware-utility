@@ -13,8 +13,10 @@ namespace RS485
     RawSerial rs485;
     Thread readThread;
     Thread writeThread;
+    EventFlags event;
 
     uint8_t packet_count = 0;
+    uint32_t event_flag = 0;
     uint8_t board_adress;
     uint32_t sleep_time;
 
@@ -42,7 +44,15 @@ namespace RS485
 
     void send_packet()
     {
+        event.set(event_flag);
 
+        // wait for all thread to finish getting their data before erasing
+        while(event.get() != 0)
+        {
+            ThisThread::sleep_for(sleep_time);
+        }
+        event_flag = 0;
+        packet_count = 0;
     }
 
     /**
@@ -120,6 +130,9 @@ namespace RS485
                 packet_array[packet_count].data[i] = local_data[i];
             }
 
+            // add the command to the event_flag
+            event_flag = event_flag | (1 << local_cmd);
+
             packet_count++;
 
             if(packet_count > PACKET_ARRAY_SIZE)
@@ -138,12 +151,43 @@ namespace RS485
 
     }
 
-    void write()
+    uint8_t read(uint8_t* cmd_array, uint8_t nb_command, uint8_t* data_buffer)
     {
+        uint8_t data_size = 0;
+        uint32_t cmd_flag = 0;
 
+        //detect what flag the user is waiting for
+        for(uint8_t i = 0; i < nb_command; ++i)
+        {
+            cmd_flag = cmd_flag | (1 << cmd_array[i])
+        }
+
+        while(1)
+        {
+            event.wait_any(cmd_flag, osWaitForever, false);
+
+            // check for the good packet in the array
+            for(uint8_t i = packet_count-1; i >= 0; --i)
+            {
+                for(uint8_t j = 0; j < nb_command; ++j)
+                {
+                    if(packet_array[i].cmd == cmd_array[j])
+                    {
+                        // the good packet is found, transfert the data
+                        for(uint8_t x = 0; x < packet_array[i].nb_byte; ++x)
+                        {
+                            data_buffer[x] = packet_array[i].data[x];
+                        }
+
+                        event.clear(cmd_flag);
+                        return packet_array[i].nb_byte;
+                    }
+                }
+            }
+        }
     }
 
-    uint8_t read()
+    void write()
     {
 
     }
