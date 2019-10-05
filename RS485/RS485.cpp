@@ -1,5 +1,5 @@
 /**
- * @file RS485.c
+ * @file RS485.cpp
  * @brief The source file for the RS485 firmware interface
  * 
  */
@@ -11,7 +11,11 @@ namespace RS485
 {
 
     RawSerial rs485;
-    uint8_t packet_count;
+    Thread readThread;
+    Thread writeThread;
+
+
+    uint8_t packet_count = 0;
 
 
     /**
@@ -26,7 +30,11 @@ namespace RS485
         }
         else
         {
-            ThisThread::sleep_for(20);
+
+#ifdef SLEEP_TIME
+            ThisThread::sleep_for(SLEEP_MS);
+#endif
+
         }
     }
 
@@ -49,5 +57,39 @@ namespace RS485
                 analyse_dead_time();
             }
         }
+    }
+
+    /**
+     * @brief the main reader thread
+     * 
+     */
+    void read_thread()
+    {
+
+    }
+
+    /**
+     * @brief 
+     * 
+     */
+    void write_thread()
+    {
+
+    }
+
+    /**
+     * @brief the init function for RS485
+     * 
+     * @param tx 
+     * @param rx 
+     */
+    void init(PinName &tx, PinName &rx)
+    {
+        rs485 = RawSerial(tx, rx, 115200);
+        readThread.set_priority(osPriorityBelowNormal);
+        writeThread.set_priority(osPriorityBelowNormal1);
+
+        readThread.start(read_thread);
+        writeThread.start(write_thread);
     }
 }
