@@ -6,11 +6,13 @@
 
 #include "mbed.h"
 #include "rtos.h"
+
 #include "RS485.h"
+#include "pinDef.h"
 
 namespace RS485
 {
-    RawSerial rs485(PD_5, PD_6, 115200);
+    RawSerial rs485(RS485_TX_PIN, RS485_RX_PIN, 115200);
     Thread readThread;
     Thread writeThread;
     EventFlags event;
