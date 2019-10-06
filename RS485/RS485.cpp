@@ -269,10 +269,10 @@ namespace RS485
         board_adress = adress;
         sleep_time = prefered_sleep_time;
 
-        readThread.set_priority(osPriorityBelowNormal);
-        writeThread.set_priority(osPriorityBelowNormal1);
-
         readThread.start(read_thread);
         writeThread.start(write_thread);
+
+        readThread.set_priority(osPriorityBelowNormal);
+        writeThread.set_priority(osPriorityBelowNormal);
     }
 }
