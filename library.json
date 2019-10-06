@@ -1,0 +1,22 @@
+{
+    "name": "Sonia_firmware_utility",
+    "keywords": "Sonia, Utility, AUV, Mbed",
+    "description": "Utility for Sonia board firmware",
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/sonia-auv/Firmware_utility.git"
+    },
+    "authors":
+    [
+      {
+        "name": "Lucas Mongrain",
+        "email": "xeaprog@gmail.com",
+        "maintainer": true
+      }
+    ],
+    "version": "1.0.0",
+    "frameworks": "mbed",
+    "platforms": "ststm32"
+  }
+  
