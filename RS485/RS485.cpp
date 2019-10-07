@@ -13,6 +13,10 @@
 namespace RS485
 {
     RawSerial rs485(RS485_TX_PIN, RS485_RX_PIN, 115200);
+    DigitalOut re(RS485_RE_PIN);
+    DigitalOut te(RS485_TE_PIN);
+    DigitalOut de(RS485_DE_PIN);
+
     Thread readThread;
     Thread writeThread;
     EventFlags event;
@@ -270,6 +274,10 @@ namespace RS485
     {
         board_adress = adress;
         sleep_time = prefered_sleep_time;
+
+        re.write(0);
+        te.write(1);
+        de.write(1);
 
         readThread.start(read_thread);
         writeThread.start(write_thread);
