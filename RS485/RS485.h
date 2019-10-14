@@ -1,3 +1,9 @@
+/**
+ * @file RS485.h
+ * @brief RS485 header
+ * 
+ */
+
 #ifndef RS485_H
 #define RS485_H
 

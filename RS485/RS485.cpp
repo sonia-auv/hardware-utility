@@ -2,6 +2,10 @@
  * @file RS485.cpp
  * @brief The source file for the RS485 firmware interface
  * 
+ * To start the RS485 thread call the RS485::init() before initializing other thread in the main function.
+ * To read bytes, use the RS485::read() function the priority of your thread must be higher than osPriorityBelowNormal.
+ * To write bytes, use the RS485::write() function.
+ * 
  */
 
 #include "mbed.h"
