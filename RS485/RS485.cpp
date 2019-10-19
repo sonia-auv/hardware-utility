@@ -92,7 +92,9 @@ namespace RS485
                 }
                 else
                 {
-                    ThisThread::sleep_for(sleep_time);
+                    #ifdef RELEASE
+                        ThisThread::sleep_for(sleep_time);
+                    #endif
                 }
             }
         }
