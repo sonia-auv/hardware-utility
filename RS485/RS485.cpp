@@ -22,7 +22,6 @@ namespace RS485
     DigitalOut de(RS485_DE_PIN);
 
     Thread readThread;
-    Thread writeThread;
     EventFlags event;
 
     uint8_t packet_count = 0;
@@ -30,8 +29,9 @@ namespace RS485
     uint8_t board_adress;
     uint32_t sleep_time;
 
+    Mutex writer_mutex;
+
     RS485_reader_message packet_array[PACKET_ARRAY_SIZE];
-    Queue<RS485_writer_message, WRITER_QUEUE_SIZE> writer_queue;
 
     /**
      * @brief calculate the checksum 
@@ -116,7 +116,9 @@ namespace RS485
             }
             else
             {
-                ThisThread::sleep_for(sleep_time);
+                #ifdef RELEASE
+                    ThisThread::sleep_for(sleep_time);
+                #endif
             }
         }
     }
@@ -181,30 +183,6 @@ namespace RS485
     }
 
     /**
-     * @brief the main writer thread
-     * 
-     */
-    void write_thread()
-    {
-        while(1)
-        {
-            RS485_writer_message* message = (RS485_writer_message*) writer_queue.get().value.p;
-            serial_write(0x3A);
-            serial_write(message->slave);
-            serial_write(message->cmd);
-            serial_write(message->nb_byte);
-            for(uint8_t i = 0; i < message->nb_byte; ++i)
-            {
-                serial_write(message->data[i]);
-            }
-            serial_write((uint8_t)(message->checksum >> 8));
-            serial_write((uint8_t)(message->checksum & 0xFF));
-            serial_write(0x0D);
-            free(message);
-        }
-    }
-
-    /**
      * @brief the user function to read on RS485
      * 
      * @param cmd_array an array that contains the command the thread need to receive to wakeup.
@@ -257,17 +235,21 @@ namespace RS485
      */
     void write(uint8_t slave, uint8_t cmd, uint8_t nb_byte, uint8_t* data_buffer)
     {
-        RS485_writer_message* writer_message = (RS485_writer_message*)malloc(sizeof(RS485_writer_message));
-        writer_message->slave = slave;
-        writer_message->cmd = cmd;
-        writer_message->nb_byte = nb_byte;
+        uint16_t checksum = calculateCheckSum(slave, cmd, nb_byte, data_buffer);
+
+        writer_mutex.lock();
+        serial_write(0x3A);
+        serial_write(slave);
+        serial_write(cmd);
+        serial_write(nb_byte);
         for(uint8_t i = 0; i < nb_byte; ++i)
         {
-            writer_message->data[i] = data_buffer[i];
+            serial_write(data_buffer[i]);
         }
-        writer_message->checksum = calculateCheckSum(slave, cmd, nb_byte, data_buffer);
-
-        writer_queue.put(writer_message, osWaitForever);
+        serial_write((uint8_t)(checksum >> 8));
+        serial_write((uint8_t)(checksum & 0xFF));
+        serial_write(0x0D);
+        writer_mutex.unlock();
     }
 
     /**
@@ -286,9 +268,6 @@ namespace RS485
         de.write(1);
 
         readThread.start(read_thread);
-        writeThread.start(write_thread);
-
         readThread.set_priority(osPriorityBelowNormal);
-        writeThread.set_priority(osPriorityBelowNormal);
     }
 }
