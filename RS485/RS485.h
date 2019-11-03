@@ -23,5 +23,6 @@ namespace RS485
         uint8_t nb_byte;
         uint8_t data[255];
     } RS485_reader_message;
+}
 
 #endif

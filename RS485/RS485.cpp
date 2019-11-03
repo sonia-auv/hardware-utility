@@ -261,7 +261,7 @@ namespace RS485
      */
     void init(const uint8_t address, const uint32_t prefered_sleep_time)
     {
-        board_adress = adress;
+        board_adress = address;
         sleep_time = prefered_sleep_time;
 
         re.write(0);
