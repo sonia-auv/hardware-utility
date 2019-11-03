@@ -6,6 +6,8 @@
  * To read bytes, use the RS485::read() function the priority of your thread must be higher than osPriorityBelowNormal.
  * To write bytes, use the RS485::write() function.
  * 
+ * never call write and read function inside an interrupt
+ * 
  */
 
 #include "mbed.h"
