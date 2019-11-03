@@ -157,11 +157,8 @@ namespace RS485
             local_checksum = (uint16_t)(serial_read()<<8);
             local_checksum += serial_read();
 
-            //discard the end byte
-            serial_read();
-
             // validate the data
-            if(local_slave != board_adress || calculateCheckSum(local_slave, local_cmd, local_nb_byte, local_data) != local_checksum)
+            if(serial_read() != 0x0D || local_slave != board_adress || calculateCheckSum(local_slave, local_cmd, local_nb_byte, local_data) != local_checksum)
             {
                 continue;
             }
