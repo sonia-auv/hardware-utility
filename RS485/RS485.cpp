@@ -6,7 +6,7 @@
  * To read bytes, use the RS485::read() function the priority of your thread must be higher than osPriorityBelowNormal.
  * To write bytes, use the RS485::write() function.
  * 
- * never call write and read function inside an interrupt
+ * never call write and read function inside an interrupt.
  * 
  */
 
@@ -44,7 +44,7 @@ namespace RS485
      * @param data 
      * @return uint16_t 
      */
-    uint16_t calculateCheckSum(uint8_t slave, uint8_t cmd, uint8_t nbByte, uint8_t* data)
+    uint16_t calculateCheckSum(const uint8_t slave, const uint8_t cmd, const uint8_t nbByte, const uint8_t* data)
     {
         uint16_t check = (uint16_t)(0x3A+slave+cmd+nbByte+0x0D);
         for(uint8_t i = 0; i < nbByte; ++i)
@@ -107,7 +107,7 @@ namespace RS485
      * 
      * @param data the byte to be send
      */
-    void serial_write(uint8_t data)
+    void serial_write(const uint8_t data)
     {
         while(1)
         {
@@ -191,7 +191,7 @@ namespace RS485
      * @param data_buffer the buffer where the byte gonna be written. The buffer should be of size 255.
      * @return uint8_t the number of byte received.
      */
-    uint8_t read(uint8_t* cmd_array, uint8_t nb_command, uint8_t* data_buffer)
+    uint8_t read(const uint8_t* cmd_array, const uint8_t nb_command, uint8_t* data_buffer)
     {
         uint32_t cmd_flag = 0;
 
@@ -234,7 +234,7 @@ namespace RS485
      * @param nb_byte the number of byte to be send
      * @param data_buffer the buffer of the data to be send
      */
-    void write(uint8_t slave, uint8_t cmd, uint8_t nb_byte, uint8_t* data_buffer)
+    void write(const uint8_t slave, const uint8_t cmd, const uint8_t nb_byte, const uint8_t* data_buffer)
     {
         uint16_t checksum = calculateCheckSum(slave, cmd, nb_byte, data_buffer);
 
@@ -259,7 +259,7 @@ namespace RS485
      * @param adress the slave address of the current board
      * @param prefered_sleep_time the time(in ms) that the writer and reader thread should wait if there's no data to process.
      */
-    void init(uint8_t adress, uint32_t prefered_sleep_time)
+    void init(const uint8_t address, const uint32_t prefered_sleep_time)
     {
         board_adress = adress;
         sleep_time = prefered_sleep_time;
