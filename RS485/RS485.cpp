@@ -111,8 +111,10 @@ namespace RS485
         {
             if(rs485.writeable())
             {
-                rs485.putc(data);
-                break;
+                if(rs485.putc(data) != -1)
+                {
+                    break;
+                }
             }
             else
             {
