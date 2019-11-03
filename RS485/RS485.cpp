@@ -179,7 +179,7 @@ namespace RS485
 
             packet_count++;
 
-            if(packet_count > PACKET_ARRAY_SIZE)
+            if(packet_count >= PACKET_ARRAY_SIZE)
             {
                 send_packet();
             }
