@@ -92,12 +92,6 @@ namespace RS485
                 {
                     send_packet();
                 }
-                else
-                {
-                    #ifdef RELEASE
-                        ThisThread::sleep_for(sleep_time);
-                    #endif
-                }
             }
         }
     }
@@ -117,12 +111,6 @@ namespace RS485
                 {
                     break;
                 }
-            }
-            else
-            {
-                #ifdef RELEASE
-                    ThisThread::sleep_for(sleep_time);
-                #endif
             }
         }
     }
