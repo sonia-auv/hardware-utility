@@ -224,10 +224,10 @@ namespace RS485
      */
     void write(const uint8_t slave, const uint8_t cmd, const uint8_t nb_byte, const uint8_t* data_buffer)
     {
-        de.write(1);
         uint16_t checksum = calculateCheckSum(slave, cmd, nb_byte, data_buffer);
 
         writer_mutex.lock();
+        de.write(1);
         serial_write(0x3A);
         serial_write(slave);
         serial_write(cmd);
@@ -239,8 +239,9 @@ namespace RS485
         serial_write((uint8_t)(checksum >> 8));
         serial_write((uint8_t)(checksum & 0xFF));
         serial_write(0x0D);
-        writer_mutex.unlock();
+        ThisThread::sleep_for(10);
         de.write(0);
+        writer_mutex.unlock();
     }
 
     /**
