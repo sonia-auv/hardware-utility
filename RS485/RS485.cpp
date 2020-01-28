@@ -122,10 +122,6 @@ namespace RS485
      */
     void read_thread()
     {
-        uint8_t local_slave;
-        uint8_t local_cmd;
-        uint8_t local_nb_byte;
-        uint8_t local_data[255];
         uint16_t local_checksum;
 
         while(1)
@@ -134,13 +130,13 @@ namespace RS485
             while(serial_read() != 0x3A);
 
             // collect all the information
-            local_slave = serial_read();
-            local_cmd = serial_read();
-            local_nb_byte = serial_read();
+            packet_array[packet_count].slave = serial_read();
+            packet_array[packet_count].cmd = serial_read();
+            packet_array[packet_count].nb_byte = serial_read();
 
             for(uint8_t i = 0; i < local_nb_byte; ++i)
             {
-                local_data[i] = serial_read();
+                packet_array[packet_count].data[i] = serial_read();
             }
 
             local_checksum = (uint16_t)(serial_read()<<8);
@@ -148,23 +144,14 @@ namespace RS485
 
             // validate the data
             if(serial_read() != 0x0D || 
-               (local_slave != board_adress && board_adress != SLAVE_STATE_SCREEN) || 
-               calculateCheckSum(local_slave, local_cmd, local_nb_byte, local_data) != local_checksum)
+               (packet_array[packet_count].slave != board_adress && board_adress != SLAVE_STATE_SCREEN) || 
+               calculateCheckSum(packet_array[packet_count].slave, packet_array[packet_count].cmd, packet_array[packet_count].nb_byte, packet_array[packet_count].data) != local_checksum)
             {
                 continue;
             }
 
-            // if the packet is good send it in the packet array
-            packet_array[packet_count].slave = local_slave;
-            packet_array[packet_count].cmd = local_cmd;
-            packet_array[packet_count].nb_byte = local_nb_byte;
-            for(uint8_t i = 0; i < local_nb_byte; ++i)
-            {
-                packet_array[packet_count].data[i] = local_data[i];
-            }
-
-            // add the command to the event_flag
-            event_flag = event_flag | (1 << local_cmd);
+            // if the packet is good, add the command to the event_flag
+            event_flag = event_flag | (1 << packet_array[packet_count].cmd);
 
             packet_count++;
 
