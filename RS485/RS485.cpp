@@ -148,7 +148,7 @@ namespace RS485
 
             // validate the data
             if(serial_read() != 0x0D || 
-               (local_slave != board_adress || board_adress == SLAVE_LED_SCREEN) || 
+               (local_slave != board_adress && board_adress != SLAVE_STATE_SCREEN) || 
                calculateCheckSum(local_slave, local_cmd, local_nb_byte, local_data) != local_checksum)
             {
                 continue;
