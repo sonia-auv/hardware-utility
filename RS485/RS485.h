@@ -19,6 +19,7 @@ namespace RS485
 
     typedef struct RS485_reader_message_struct
     {
+        uint8_t slave;
         uint8_t cmd;
         uint8_t nb_byte;
         uint8_t data[255];

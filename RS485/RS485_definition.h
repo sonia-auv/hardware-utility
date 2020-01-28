@@ -2,6 +2,7 @@
 //              SLAVE DEFINITION
 //###################################################
 
+#define SLAVE_LED_SCREEN 1
 #define SLAVE_powersupply0 49
 #define SLAVE_powersupply1 50
 #define SLAVE_powersupply2 51
