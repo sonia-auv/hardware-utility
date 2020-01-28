@@ -13,6 +13,7 @@
 #include "mbed.h"
 #include "rtos.h"
 
+#include "RS485_definition.h"
 #include "RS485.h"
 #include "pinDef.h"
 
@@ -121,10 +122,6 @@ namespace RS485
      */
     void read_thread()
     {
-        uint8_t local_slave;
-        uint8_t local_cmd;
-        uint8_t local_nb_byte;
-        uint8_t local_data[255];
         uint16_t local_checksum;
 
         while(1)
@@ -133,34 +130,28 @@ namespace RS485
             while(serial_read() != 0x3A);
 
             // collect all the information
-            local_slave = serial_read();
-            local_cmd = serial_read();
-            local_nb_byte = serial_read();
+            packet_array[packet_count].slave = serial_read();
+            packet_array[packet_count].cmd = serial_read();
+            packet_array[packet_count].nb_byte = serial_read();
 
             for(uint8_t i = 0; i < local_nb_byte; ++i)
             {
-                local_data[i] = serial_read();
+                packet_array[packet_count].data[i] = serial_read();
             }
 
             local_checksum = (uint16_t)(serial_read()<<8);
             local_checksum += serial_read();
 
             // validate the data
-            if(serial_read() != 0x0D || local_slave != board_adress || calculateCheckSum(local_slave, local_cmd, local_nb_byte, local_data) != local_checksum)
+            if(serial_read() != 0x0D || 
+               (packet_array[packet_count].slave != board_adress && board_adress != SLAVE_STATE_SCREEN) || 
+               calculateCheckSum(packet_array[packet_count].slave, packet_array[packet_count].cmd, packet_array[packet_count].nb_byte, packet_array[packet_count].data) != local_checksum)
             {
                 continue;
             }
 
-            // if the packet is good send it in the packet array
-            packet_array[packet_count].cmd = local_cmd;
-            packet_array[packet_count].nb_byte = local_nb_byte;
-            for(uint8_t i = 0; i < local_nb_byte; ++i)
-            {
-                packet_array[packet_count].data[i] = local_data[i];
-            }
-
-            // add the command to the event_flag
-            event_flag = event_flag | (1 << local_cmd);
+            // if the packet is good, add the command to the event_flag
+            event_flag = event_flag | (1 << packet_array[packet_count].cmd);
 
             packet_count++;
 
@@ -177,9 +168,10 @@ namespace RS485
      * @param cmd_array an array that contains the command the thread need to receive to wakeup.
      * @param nb_command the number of command.
      * @param data_buffer the buffer where the byte gonna be written. The buffer should be of size 255.
+     * @param returned_slave the slave that been returned by the command.
      * @return uint8_t the number of byte received.
      */
-    uint8_t read(const uint8_t* cmd_array, const uint8_t nb_command, uint8_t* data_buffer)
+    uint8_t read(const uint8_t* cmd_array, const uint8_t nb_command, uint8_t& returned_slave, uint8_t* data_buffer)
     {
         uint32_t cmd_flag = 0;
 
@@ -205,6 +197,7 @@ namespace RS485
                         {
                             data_buffer[x] = packet_array[i].data[x];
                         }
+                        returned_slave = packet_array[i].slave;
 
                         event.clear(cmd_flag);
                         return packet_array[i].nb_byte;
