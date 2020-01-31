@@ -17,242 +17,236 @@
 #include "RS485.h"
 #include "pinDef.h"
 
-namespace RS485
+/**
+ * @brief RS485 constructor.
+ * 
+ * @param board_adress the slave address of the current board
+ * @param prefered_sleep_time the time(in ms) that the writer and reader thread should wait if there's no data to process.
+ * @param packet_array_size the number of packet RS485 can process at the same time.
+ */
+void RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, const uint8_t packet_array_size)
 {
-    RawSerial rs485(RS485_TX_PIN, RS485_RX_PIN, 115200);
-    DigitalOut re(RS485_RE_PIN);
-    DigitalOut te(RS485_TE_PIN);
-    DigitalOut de(RS485_DE_PIN);
+    this->board_adress = address;
+    this->prefered_sleep_time = prefered_sleep_time;
+    this->packet_array_size = packet_array_size;
 
-    Thread readThread;
-    EventFlags event;
+    packet_array = (RS485_reader_message*)malloc(sizeof(RS485_reader_message)*packet_array_size);
 
-    uint8_t packet_count = 0;
-    uint32_t event_flag = 0;
-    uint8_t board_adress;
-    uint32_t sleep_time;
+    re.write(0);
+    te.write(1);
+    de.write(0);
 
-    Mutex writer_mutex;
+    readThread.start(read_thread);
+    readThread.set_priority(osPriorityBelowNormal);
+}
 
-    RS485_reader_message packet_array[PACKET_ARRAY_SIZE];
+/**
+ * @brief Destroy the RS485::RS485 object
+ * 
+ */
+RS485::~RS485()
+{
+    free(packet_array);
+    packet_array = NULL;
+}
 
-    /**
-     * @brief calculate the checksum 
-     * 
-     * @param slave 
-     * @param cmd 
-     * @param nbByte 
-     * @param data 
-     * @return uint16_t 
-     */
-    uint16_t calculateCheckSum(const uint8_t slave, const uint8_t cmd, const uint8_t nbByte, const uint8_t* data)
+/**
+ * @brief calculate the checksum 
+ * 
+ * @param slave 
+ * @param cmd 
+ * @param nbByte 
+ * @param data 
+ * @return uint16_t 
+ */
+uint16_t RS485::calculateCheckSum(const uint8_t slave, const uint8_t cmd, const uint8_t nbByte, const uint8_t* data)
+{
+    uint16_t check = (uint16_t)(0x3A+slave+cmd+nbByte+0x0D);
+    for(uint8_t i = 0; i < nbByte; ++i)
     {
-        uint16_t check = (uint16_t)(0x3A+slave+cmd+nbByte+0x0D);
-        for(uint8_t i = 0; i < nbByte; ++i)
-        {
-            check += data[i];
-        }
-
-        return check;
+        check += data[i];
     }
 
-    /**
-     * @brief function that wakeup the thread waiting for a packet
-     * 
-     */
-    void send_packet()
-    {
-        event.set(event_flag);
+    return check;
+}
 
-        // wait for all thread to finish getting their data before erasing
-        while(event.get() != 0)
-        {
-            ThisThread::sleep_for(sleep_time);
-        }
-        event_flag = 0;
-        packet_count = 0;
+/**
+ * @brief function that wakeup the thread waiting for a packet
+ * 
+ */
+void RS485::send_packet()
+{
+    event.set(event_flag);
+
+    // wait for all thread to finish getting their data before erasing
+    while(event.get() != 0)
+    {
+        ThisThread::sleep_for(sleep_time);
     }
+    event_flag = 0;
+    packet_count = 0;
+}
 
-    /**
-     * @brief a blocking call that wait for a byte to be read
-     * 
-     * @return uint8_t the value that've been read
-     */
-    uint8_t serial_read()
+/**
+ * @brief a blocking call that wait for a byte to be read
+ * 
+ * @return uint8_t the value that've been read
+ */
+uint8_t RS485::serial_read()
+{
+    while(1)
     {
-        while(1)
+        if(rs485.readable())
         {
-            if(rs485.readable())
-            {
-                return rs485.getc();
-                break;
-            }
-            else
-            {
-                if(packet_count)
-                {
-                    send_packet();
-                }
-            }
+            return rs485.getc();
+            break;
         }
-    }
-
-    /**
-     * @brief a blocking call that wait to send a byte 
-     * 
-     * @param data the byte to be send
-     */
-    void serial_write(const uint8_t data)
-    {
-        while(1)
+        else
         {
-            if(rs485.writeable())
-            {
-                if(rs485.putc(data) != -1)
-                {
-                    break;
-                }
-            }
-        }
-    }
-
-    /**
-     * @brief the main reader thread
-     * 
-     */
-    void read_thread()
-    {
-        uint16_t local_checksum;
-
-        while(1)
-        {
-            // search for the start byte
-            while(serial_read() != 0x3A);
-
-            // collect all the information
-            packet_array[packet_count].slave = serial_read();
-            packet_array[packet_count].cmd = serial_read();
-            packet_array[packet_count].nb_byte = serial_read();
-
-            for(uint8_t i = 0; i < local_nb_byte; ++i)
-            {
-                packet_array[packet_count].data[i] = serial_read();
-            }
-
-            local_checksum = (uint16_t)(serial_read()<<8);
-            local_checksum += serial_read();
-
-            // validate the data
-            if(serial_read() != 0x0D || 
-               (packet_array[packet_count].slave != board_adress && board_adress != SLAVE_STATE_SCREEN) || 
-               calculateCheckSum(packet_array[packet_count].slave, packet_array[packet_count].cmd, packet_array[packet_count].nb_byte, packet_array[packet_count].data) != local_checksum)
-            {
-                continue;
-            }
-
-            // if the packet is good, add the command to the event_flag
-            event_flag = event_flag | (1 << packet_array[packet_count].cmd);
-
-            packet_count++;
-
-            if(packet_count >= PACKET_ARRAY_SIZE)
+            if(packet_count)
             {
                 send_packet();
             }
         }
     }
+}
 
-    /**
-     * @brief the user function to read on RS485
-     * 
-     * @param cmd_array an array that contains the command the thread need to receive to wakeup.
-     * @param nb_command the number of command.
-     * @param data_buffer the buffer where the byte gonna be written. The buffer should be of size 255.
-     * @param returned_slave the slave that been returned by the command.
-     * @return uint8_t the number of byte received.
-     */
-    uint8_t read(const uint8_t* cmd_array, const uint8_t nb_command, uint8_t& returned_slave, uint8_t* data_buffer)
+/**
+ * @brief a blocking call that wait to send a byte 
+ * 
+ * @param data the byte to be send
+ */
+void RS485::serial_write(const uint8_t data)
+{
+    while(1)
     {
-        uint32_t cmd_flag = 0;
-
-        //detect what flag the user is waiting for
-        for(uint8_t i = 0; i < nb_command; ++i)
+        if(rs485.writeable())
         {
-            cmd_flag = cmd_flag | (1 << cmd_array[i]);
+            if(rs485.putc(data) != -1)
+            {
+                break;
+            }
+        }
+    }
+}
+
+/**
+ * @brief the main reader thread
+ * 
+ */
+void RS485::read_thread()
+{
+    uint16_t local_checksum;
+
+    while(1)
+    {
+        // search for the start byte
+        while(serial_read() != 0x3A);
+
+        // collect all the information
+        packet_array[packet_count].slave = serial_read();
+        packet_array[packet_count].cmd = serial_read();
+        packet_array[packet_count].nb_byte = serial_read();
+
+        for(uint8_t i = 0; i < local_nb_byte; ++i)
+        {
+            packet_array[packet_count].data[i] = serial_read();
         }
 
-        while(1)
+        local_checksum = (uint16_t)(serial_read()<<8);
+        local_checksum += serial_read();
+
+        // validate the data
+        if(serial_read() != 0x0D || 
+            (packet_array[packet_count].slave != board_adress && board_adress != SLAVE_STATE_SCREEN) || 
+            calculateCheckSum(packet_array[packet_count].slave, packet_array[packet_count].cmd, packet_array[packet_count].nb_byte, packet_array[packet_count].data) != local_checksum)
         {
-            event.wait_any(cmd_flag, osWaitForever, false);
+            continue;
+        }
 
-            // check for the good packet in the array
-            for(int8_t i = packet_count-1; i >= 0; --i)
+        // if the packet is good, add the command to the event_flag
+        event_flag = event_flag | (1 << packet_array[packet_count].cmd);
+
+        packet_count++;
+
+        if(packet_count >= packet_array_size)
+        {
+            send_packet();
+        }
+    }
+}
+
+/**
+ * @brief the user function to read on RS485
+ * 
+ * @param cmd_array an array that contains the command the thread need to receive to wakeup.
+ * @param nb_command the number of command.
+ * @param data_buffer the buffer where the byte gonna be written. The buffer should be of size 255.
+ * @param returned_slave the slave that been returned by the command.
+ * @return uint8_t the number of byte received.
+ */
+uint8_t RS485::read(const uint8_t* cmd_array, const uint8_t nb_command, uint8_t& returned_slave, uint8_t* data_buffer)
+{
+    uint32_t cmd_flag = 0;
+
+    //detect what flag the user is waiting for
+    for(uint8_t i = 0; i < nb_command; ++i)
+    {
+        cmd_flag = cmd_flag | (1 << cmd_array[i]);
+    }
+
+    while(1)
+    {
+        event.wait_any(cmd_flag, osWaitForever, false);
+
+        // check for the good packet in the array
+        for(int8_t i = packet_count-1; i >= 0; --i)
+        {
+            for(uint8_t j = 0; j < nb_command; ++j)
             {
-                for(uint8_t j = 0; j < nb_command; ++j)
+                if(packet_array[i].cmd == cmd_array[j])
                 {
-                    if(packet_array[i].cmd == cmd_array[j])
+                    // the good packet is found, transfert the data
+                    for(uint8_t x = 0; x < packet_array[i].nb_byte; ++x)
                     {
-                        // the good packet is found, transfert the data
-                        for(uint8_t x = 0; x < packet_array[i].nb_byte; ++x)
-                        {
-                            data_buffer[x] = packet_array[i].data[x];
-                        }
-                        returned_slave = packet_array[i].slave;
-
-                        event.clear(cmd_flag);
-                        return packet_array[i].nb_byte;
+                        data_buffer[x] = packet_array[i].data[x];
                     }
+                    returned_slave = packet_array[i].slave;
+
+                    event.clear(cmd_flag);
+                    return packet_array[i].nb_byte;
                 }
             }
         }
     }
+}
 
-    /**
-     * @brief the user function to write on RS485
-     * 
-     * @param slave the slave address the message should be send to
-     * @param cmd the cmd to send to the message
-     * @param nb_byte the number of byte to be send
-     * @param data_buffer the buffer of the data to be send
-     */
-    void write(const uint8_t slave, const uint8_t cmd, const uint8_t nb_byte, const uint8_t* data_buffer)
+/**
+ * @brief the user function to write on RS485
+ * 
+ * @param slave the slave address the message should be send to
+ * @param cmd the cmd to send to the message
+ * @param nb_byte the number of byte to be send
+ * @param data_buffer the buffer of the data to be send
+ */
+void RS485::write(const uint8_t slave, const uint8_t cmd, const uint8_t nb_byte, const uint8_t* data_buffer)
+{
+    uint16_t checksum = calculateCheckSum(slave, cmd, nb_byte, data_buffer);
+
+    writer_mutex.lock();
+    de.write(1);
+    serial_write(0x3A);
+    serial_write(slave);
+    serial_write(cmd);
+    serial_write(nb_byte);
+    for(uint8_t i = 0; i < nb_byte; ++i)
     {
-        uint16_t checksum = calculateCheckSum(slave, cmd, nb_byte, data_buffer);
-
-        writer_mutex.lock();
-        de.write(1);
-        serial_write(0x3A);
-        serial_write(slave);
-        serial_write(cmd);
-        serial_write(nb_byte);
-        for(uint8_t i = 0; i < nb_byte; ++i)
-        {
-            serial_write(data_buffer[i]);
-        }
-        serial_write((uint8_t)(checksum >> 8));
-        serial_write((uint8_t)(checksum & 0xFF));
-        serial_write(0x0D);
-        ThisThread::sleep_for(10);
-        de.write(0);
-        writer_mutex.unlock();
+        serial_write(data_buffer[i]);
     }
-
-    /**
-     * @brief the init function for RS485
-     * 
-     * @param adress the slave address of the current board
-     * @param prefered_sleep_time the time(in ms) that the writer and reader thread should wait if there's no data to process.
-     */
-    void init(const uint8_t address, const uint32_t prefered_sleep_time)
-    {
-        board_adress = address;
-        sleep_time = prefered_sleep_time;
-
-        re.write(0);
-        te.write(1);
-        de.write(0);
-
-        readThread.start(read_thread);
-        readThread.set_priority(osPriorityBelowNormal);
-    }
+    serial_write((uint8_t)(checksum >> 8));
+    serial_write((uint8_t)(checksum & 0xFF));
+    serial_write(0x0D);
+    ThisThread::sleep_for(10);
+    de.write(0);
+    writer_mutex.unlock();
 }
