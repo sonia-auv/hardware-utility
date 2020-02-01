@@ -31,13 +31,11 @@
 #define CMD_PS_temperature 6
 #define CMD_PS_VBatt 7
 
-#define CMD_PS_ACT_12V 8
-#define CMD_PS_ACT_16V_1 9
-#define CMD_PS_ACT_16V_2 10
+#define CMD_PS_ACT_16V_1 8
+#define CMD_PS_ACT_16V_2 9
 
-#define CMD_PS_CHECK_12V 11
-#define CMD_PS_CHECK_16V_1 12
-#define CMD_PS_CHECK_16V_2 13
+#define CMD_PS_CHECK_16V_1 10
+#define CMD_PS_CHECK_16V_2 11
 
 // define ESC
 #define CMD_ESC_MOTOR_1 0
