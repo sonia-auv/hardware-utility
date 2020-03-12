@@ -2,32 +2,24 @@
 //              SLAVE DEFINITION
 //###################################################
 
-#define SLAVE_LED_SCREEN 1
-#define SLAVE_powersupply0 49
-#define SLAVE_powersupply1 50
-#define SLAVE_powersupply2 51
-#define SLAVE_powersupply3 52
-#define SLAVE_killMission 32
-#define SLAVE_ESC_PWM 16
-#define SLAVE_ESC_1 17
-#define SLAVE_ESC_2 18
-#define SLAVE_ESC_3 19
-#define SLAVE_ESC_4 20
-#define SLAVE_ESC_5 21
-#define SLAVE_ESC_6 22
-#define SLAVE_ESC_7 23
-#define SLAVE_ESC_8 24
-#define SLAVE_IO_CTR 64
+#define SLAVE_powersupply0 0
+#define SLAVE_powersupply1 1
+#define SLAVE_powersupply2 2
+#define SLAVE_powersupply3 3
+#define SLAVE_killMission 4
+#define SLAVE_ESC 5
+#define SLAVE_IO_CTR 6
+#define SLAVE_STATE_SCREEN 7
 
 //###################################################
 //              CMD DEFINITION
 //###################################################
 
-// les define de la kill mission switch
+// define kill mission switch
 #define CMD_MISSION 0
 #define CMD_KILL 1
 
-// les define du powersupply
+// define powersupply
 #define CMD_PS_V16_1 0
 #define CMD_PS_V16_2 1
 #define CMD_PS_V12 2
@@ -39,16 +31,21 @@
 #define CMD_PS_temperature 6
 #define CMD_PS_VBatt 7
 
-#define CMD_PS_ACT_12V 8
-#define CMD_PS_ACT_16V_1 9
-#define CMD_PS_ACT_16V_2 10
+#define CMD_PS_ACT_16V_1 8
+#define CMD_PS_ACT_16V_2 9
 
-#define CMD_PS_CHECK_12V 11
-#define CMD_PS_CHECK_16V_1 12
-#define CMD_PS_CHECK_16V_2 13
+#define CMD_PS_CHECK_16V_1 10
+#define CMD_PS_CHECK_16V_2 11
 
-// define de ESC
-#define CMD_ESC_power 0
+// define ESC
+#define CMD_ESC_MOTOR_1 0
+#define CMD_ESC_MOTOR_2 1
+#define CMD_ESC_MOTOR_3 2
+#define CMD_ESC_MOTOR_4 3
+#define CMD_ESC_MOTOR_5 4
+#define CMD_ESC_MOTOR_6 5
+#define CMD_ESC_MOTOR_7 6
+#define CMD_ESC_MOTOR_8 7
 
 // define IO CONTROL
 #define CMD_IO_TEMP  0
