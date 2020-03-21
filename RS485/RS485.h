@@ -58,6 +58,6 @@ class RS485
         void serial_write(const uint8_t data);
         void read_thread();
 
-}
+};
 
 #endif
