@@ -86,11 +86,6 @@ void RS485::send_packet()
 {
     event.set(event_flag);
 
-    // wait for all thread to finish getting their data before erasing
-    /*while(event.get() != 0)
-    {
-        ThisThread::sleep_for(sleep_time);
-    }*/
     event_flag = 0;
     packet_count = 0;
 }
