@@ -60,4 +60,16 @@ class RS485
 
 };
 
+template<typename T, typename R>
+void* void_cast(R(T::*f)())
+{
+    union
+    {
+        R(T::*pf)();
+        void* p;
+    };
+    pf = f;
+    return p;
+}
+
 #endif
