@@ -25,7 +25,7 @@
  * @param packet_array_size the number of packet RS485 can process at the same time.
  * @param te_value define if the terminal resistor need to be enabled on this board.
  */
-RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, const uint8_t packet_array_size, const int te_value)
+RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, const uint8_t packet_array_size, const uint8_t te_value)
 {
     rs485 = RawSerial(RS485_TX_PIN, RS485_RX_PIN, 115200);
     re = DigitalOut(RS485_RE_PIN, 0);
@@ -82,10 +82,10 @@ void RS485::send_packet()
     event.set(event_flag);
 
     // wait for all thread to finish getting their data before erasing
-    while(event.get() != 0)
+    /*while(event.get() != 0)
     {
         ThisThread::sleep_for(sleep_time);
-    }
+    }*/
     event_flag = 0;
     packet_count = 0;
 }
