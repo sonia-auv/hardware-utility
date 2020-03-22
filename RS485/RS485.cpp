@@ -29,7 +29,7 @@ RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, co
 {
     rs485 = RawSerial(RS485_TX_PIN, RS485_RX_PIN, 115200);
     re = DigitalOut(RS485_RE_PIN, 0);
-    te = DigitalOut(RS485_TE_PIN, te_value);
+    te = DigitalOut(RS485_TE_PIN, (int)te_value);
     de = DigitalOut(RS485_DE_PIN, 0);
 
 
