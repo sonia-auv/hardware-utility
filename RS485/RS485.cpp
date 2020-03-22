@@ -27,10 +27,10 @@
  */
 RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, const uint8_t packet_array_size, const uint8_t te_value)
 {
-    rs485 = RawSerial(RS485_TX_PIN, RS485_RX_PIN, 115200);
-    re = DigitalOut(RS485_RE_PIN, 0);
-    te = DigitalOut(RS485_TE_PIN, te_value);
-    de = DigitalOut(RS485_DE_PIN, 0);
+    rs485 = new RawSerial(RS485_TX_PIN, RS485_RX_PIN, 115200);
+    re = new DigitalOut(RS485_RE_PIN, 0);
+    te = new DigitalOut(RS485_TE_PIN, te_value);
+    de = new DigitalOut(RS485_DE_PIN, 0);
 
 
     this->board_adress = board_address;
@@ -39,7 +39,7 @@ RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, co
 
     packet_array = (RS485_reader_message*)malloc(sizeof(RS485_reader_message)*packet_array_size);
 
-    readThread.start(this,void_cast(RS485::read_thread));
+    readThread.start(this, &RS485::read_thread);
     readThread.set_priority(osPriorityBelowNormal);
 }
 
@@ -49,6 +49,11 @@ RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, co
  */
 RS485::~RS485()
 {
+    delete rs485;
+    delete re;
+    delete te;
+    delete de;
+
     free(packet_array);
     packet_array = NULL;
 }
@@ -99,9 +104,9 @@ uint8_t RS485::serial_read()
 {
     while(1)
     {
-        if(rs485.readable())
+        if(rs485->readable())
         {
-            return rs485.getc();
+            return rs485->getc();
             break;
         }
         else
@@ -123,9 +128,9 @@ void RS485::serial_write(const uint8_t data)
 {
     while(1)
     {
-        if(rs485.writeable())
+        if(rs485->writeable())
         {
-            if(rs485.putc(data) != -1)
+            if(rs485->putc(data) != -1)
             {
                 break;
             }
@@ -151,7 +156,7 @@ void RS485::read_thread()
         packet_array[packet_count].cmd = serial_read();
         packet_array[packet_count].nb_byte = serial_read();
 
-        for(uint8_t i = 0; i < local_nb_byte; ++i)
+        for(uint8_t i = 0; i < packet_array[packet_count].nb_byte; ++i)
         {
             packet_array[packet_count].data[i] = serial_read();
         }
@@ -181,6 +186,50 @@ void RS485::read_thread()
 
 /**
  * @brief the user function to read on RS485
+ * 
+ * @param cmd_array an array that contains the command the thread need to receive to wakeup.
+ * @param nb_command the number of command.
+ * @param data_buffer the buffer where the byte gonna be written. The buffer should be of size 255.
+ * @param returned_slave the slave that been returned by the command.
+ * @return uint8_t the number of byte received.
+ */
+uint8_t RS485::read(const uint8_t* cmd_array, const uint8_t nb_command, uint8_t* data_buffer)
+{
+    uint32_t cmd_flag = 0;
+
+    //detect what flag the user is waiting for
+    for(uint8_t i = 0; i < nb_command; ++i)
+    {
+        cmd_flag = cmd_flag | (1 << cmd_array[i]);
+    }
+
+    while(1)
+    {
+        event.wait_any(cmd_flag, osWaitForever, false);
+
+        // check for the good packet in the array
+        for(int8_t i = packet_count-1; i >= 0; --i)
+        {
+            for(uint8_t j = 0; j < nb_command; ++j)
+            {
+                if(packet_array[i].cmd == cmd_array[j])
+                {
+                    // the good packet is found, transfert the data
+                    for(uint8_t x = 0; x < packet_array[i].nb_byte; ++x)
+                    {
+                        data_buffer[x] = packet_array[i].data[x];
+                    }
+
+                    event.clear(cmd_flag);
+                    return packet_array[i].nb_byte;
+                }
+            }
+        }
+    }
+}
+
+/**
+ * @brief the user function to read on RS485 that also return the slave
  * 
  * @param cmd_array an array that contains the command the thread need to receive to wakeup.
  * @param nb_command the number of command.
@@ -237,7 +286,7 @@ void RS485::write(const uint8_t slave, const uint8_t cmd, const uint8_t nb_byte,
     uint16_t checksum = calculateCheckSum(slave, cmd, nb_byte, data_buffer);
 
     writer_mutex.lock();
-    de.write(1);
+    de->write(1);
     serial_write(0x3A);
     serial_write(slave);
     serial_write(cmd);
@@ -250,6 +299,6 @@ void RS485::write(const uint8_t slave, const uint8_t cmd, const uint8_t nb_byte,
     serial_write((uint8_t)(checksum & 0xFF));
     serial_write(0x0D);
     ThisThread::sleep_for(10);
-    de.write(0);
+    de->write(0);
     writer_mutex.unlock();
 }
