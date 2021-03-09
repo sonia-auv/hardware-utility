@@ -8,7 +8,7 @@
 
 #include "utility.h"
 
-float_t calcul_tension(double_t value, double_t voltageRef)
+float_t calcul_tension(double_t value, double_t voltageRef, double_t R1, double_t R2)
 {
     return (voltageRef*value*(R1+R2))/R2;
 }
@@ -47,14 +47,14 @@ float_t putCharInFloat(char * data, float_t multiplicator)
     return value*multiplicator;
 }
 
-double_t readfromAnalog(AnalogIn input, double_t voltageRef)
+double_t readfromAnalog(AnalogIn input, double_t voltageRef, double_t R1, double_t R2)
 {
     double_t voltage_battery = 0;
     uint8_t i;
 
     for(i = 0; i < 10; ++i)
     {
-      voltage_battery += calcul_tension(input.read(), voltageRef);
+      voltage_battery += calcul_tension(input.read(), voltageRef, R1, R2);
       ThisThread::sleep_for(20);
     }
     return voltage_battery / (double_t)i;

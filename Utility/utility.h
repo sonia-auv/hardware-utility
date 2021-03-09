@@ -1,9 +1,6 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#define R1 100000
-#define R2 10000
-
 #include "mbed.h"
 
 /**
@@ -12,7 +9,7 @@
  * @param value obtained value from the divider
  * @return voltage at R1 of the voltage divider
 */
-float_t calcul_tension(double_t value, double_t votlageRef);
+float_t calcul_tension(double_t value, double_t votlageRef, double_t R1, double_t R2);
 
 /**
  * Puts a float in a array
@@ -40,6 +37,16 @@ void putCharInArray(uint8_t * array, char * data, float_t multiplicator = 1);
 */
 float_t putCharInFloat(char * data, float_t multiplicator = 1);
 
-double_t readfromAnalog(AnalogIn input, double_t voltageref);
+/**
+ * @brief Read from analog
+ * 
+ * Read from an analog pin and compute an average  
+ * 
+ * @param input Analog pin 
+ * @param voltageref Reference voltage of the board
+ * @return double_t Out value of the average
+ */
+
+double_t readfromAnalog(AnalogIn input, double_t voltageref, double_t R1, double_t R2);
 
 #endif 
