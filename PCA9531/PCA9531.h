@@ -52,8 +52,6 @@ public:
  * @brief Set LEDs of the driver
  * 
  * @param state array of the state of the leds to set
- * 
- * @return uint8_t acknowledge of the send
  */
 
     void setLEDs(uint16_t state);
