@@ -5,6 +5,7 @@
 #define SLAVE_BACKPLANE 0
 #define SLAVE_IO 1
 #define SLAVE_KILLMISSION 2
+#define SLAVE_STATE_SCREEN 7
 
 //###################################################
 //              CMD DEFINITION
