@@ -24,9 +24,9 @@
 #define CMD_CURRENT 1
 
 // define backplane/ESC
-#define CMD_READ_MOTOR 2
-#define CMD_ACT_MOTOR 3
-#define CMD_PWM 4
+#define CMD_READ_MOTOR 15
+#define CMD_ACT_MOTOR 16
+#define CMD_PWM 17
 
 // define IO CONTROL
 #define CMD_IO_TEMP  0
@@ -38,6 +38,8 @@
 //###################################################
 //              DATA DEFINITION
 //###################################################
+
+// define IO CONTROL
 
 #define DATA_IO_DROPPER_PORT 0
 #define DATA_IO_DROPPER_STARBOARD 1
