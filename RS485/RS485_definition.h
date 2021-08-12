@@ -8,7 +8,7 @@
 #define SLAVE_PSU3 3
 #define SLAVE_KILLMISSION 4
 #define SLAVE_ESC 5
-#define SLAVE_IO_ 6
+#define SLAVE_IO 6
 #define SLAVE_STATE_SCREEN 7
 
 //###################################################
