@@ -2,13 +2,13 @@
 //              SLAVE DEFINITION
 //###################################################
 
-#define SLAVE_powersupply0 0
-#define SLAVE_powersupply1 1
-#define SLAVE_powersupply2 2
-#define SLAVE_powersupply3 3
-#define SLAVE_killMission 4
+#define SLAVE_PSU0 0
+#define SLAVE_PSU1 1
+#define SLAVE_PSU2 2
+#define SLAVE_PSU3 3
+#define SLAVE_KILLMISSION 4
 #define SLAVE_ESC 5
-#define SLAVE_IO_CTR 6
+#define SLAVE_IO 6
 #define SLAVE_STATE_SCREEN 7
 
 //###################################################
@@ -19,43 +19,27 @@
 #define CMD_MISSION 0
 #define CMD_KILL 1
 
-// define powersupply
-#define CMD_PS_V16_1 0
-#define CMD_PS_V16_2 1
-#define CMD_PS_V12 2
+// define backplane/PSU
+#define CMD_VOLTAGE 0
+#define CMD_CURRENT 1
 
-#define CMD_PS_C16_1 3
-#define CMD_PS_C16_2 4
-#define CMD_PS_C12 5
-
-#define CMD_PS_temperature 6
-#define CMD_PS_VBatt 7
-
-#define CMD_PS_ACT_16V_1 8
-#define CMD_PS_ACT_16V_2 9
-
-#define CMD_PS_CHECK_16V_1 10
-#define CMD_PS_CHECK_16V_2 11
-
-// define ESC
-#define CMD_ESC_MOTOR_1 0
-#define CMD_ESC_MOTOR_2 1
-#define CMD_ESC_MOTOR_3 2
-#define CMD_ESC_MOTOR_4 3
-#define CMD_ESC_MOTOR_5 4
-#define CMD_ESC_MOTOR_6 5
-#define CMD_ESC_MOTOR_7 6
-#define CMD_ESC_MOTOR_8 7
+// define backplane/ESC
+#define CMD_READ_MOTOR 15
+#define CMD_ACT_MOTOR 16
+#define CMD_PWM 17
 
 // define IO CONTROL
 #define CMD_IO_TEMP  0
 #define CMD_IO_DROPPER_ACTION  1
 #define CMD_IO_TORPEDO_ACTION  2
 #define CMD_IO_ARM_ACTION 3
+#define CMD_IO_LEAK_SENSOR 4
 
 //###################################################
 //              DATA DEFINITION
 //###################################################
+
+// define IO CONTROL
 
 #define DATA_IO_DROPPER_PORT 0
 #define DATA_IO_DROPPER_STARBOARD 1
@@ -65,3 +49,6 @@
 
 #define DATA_IO_ARM_CLOSE 0
 #define DATA_IO_ARM_OPEN 1
+
+#define DATA_IO_LEAK_SENSOR_DRY 0
+#define DATA_IO_LEAK_SENSOR_LEAK 1
