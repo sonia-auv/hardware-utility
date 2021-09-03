@@ -21,7 +21,7 @@ void PCA9531::setLEDs(uint16_t state)
     setSelectorLEDs((state >> 8), LS1);
 }
 
-void PCA9531::setPrescaler(uint8_t prescaler, uint8_t register);
+void PCA9531::setPrescaler(uint8_t prescaler, uint8_t register)
 {
     char temp[2];
 
