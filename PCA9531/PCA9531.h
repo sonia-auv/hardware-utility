@@ -53,10 +53,19 @@ public:
  * @brief
  * 
  * @param prescaler value of the prescaler for the period of the PWM
- * @param register select the register 0 or 1
+ * @param pwm_register select the register (0 or 1)
  */
 
     void setPrescaler(uint8_t prescaler, uint8_t pwm_register);
+
+/**
+ * @brief 
+ * 
+ * @param duty_cycle value on 256 for the duty cycle of the pwm
+ * @param pwm_register select the register (0 or 1)
+ */
+
+    void setDutyCycle(uint8_t duty_cycle, uint8_t pwm_register);
     
 private:
     char addr;
