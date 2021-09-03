@@ -25,7 +25,15 @@ void PCA9531::setPrescaler(uint8_t prescaler, uint8_t register)
 {
     char temp[2];
 
-    register == 1 ? temp[0] = PSC1 : temp[0] = PSC0;
+    if(register == 1)
+    {
+        temp[0] = PSC1;
+    }
+    else
+    {
+        temp[0] = PSC0;
+    }
+
     temp[1] = prescaler;
 
     _i2c->write(addr, temp, 2);
