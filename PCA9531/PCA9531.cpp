@@ -21,11 +21,11 @@ void PCA9531::setLEDs(uint16_t state)
     setSelectorLEDs((state >> 8), LS1);
 }
 
-void PCA9531::setPrescaler(uint8_t prescaler, uint8_t register)
+void PCA9531::setPrescaler(uint8_t prescaler, uint8_t pwm_register)
 {
     char temp[2];
 
-    if(register == 1)
+    if(pwm_register == 1)
     {
         temp[0] = PSC1;
     }

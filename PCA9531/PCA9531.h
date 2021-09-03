@@ -56,7 +56,7 @@ public:
  * @param register select the register 0 or 1
  */
 
-    void setPrescaler(uint8_t prescaler, uint8_t register);
+    void setPrescaler(uint8_t prescaler, uint8_t pwm_register);
     
 private:
     char addr;
