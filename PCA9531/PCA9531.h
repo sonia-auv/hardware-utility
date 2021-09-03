@@ -8,6 +8,11 @@
 
 #include "mbed.h"
 
+#define INPUT 0x00 // Input register
+#define PSC0 0x01 // Frequency prescaler 0
+#define PWM0 0x02 // PWM register 0
+#define PSC1 0x03 // Frequency prescaler 1
+#define PWM1 0x04 // PWM register 1
 #define LS0 0x05 // LED0 to LED3
 #define LS1 0x06 // LED4 to LED7
 
@@ -18,18 +23,6 @@
 
 class PCA9531
 {
-private:
-    char addr;
-    I2C *_i2c;
-
-/**
- * @brief Set LEDs of one selector register
- * 
- * @param state array of the state of the leds to set
- * @param selector selector to set the register 
- */
-
-    void setSelectorLEDs(uint8_t state, uint8_t selector);
 
 public:
 /**
@@ -55,7 +48,29 @@ public:
  */
 
     void setLEDs(uint16_t state);
+
+/**
+ * @brief
+ * 
+ * @param prescaler value of the prescaler for the period of the PWM
+ * @param register select the register 0 or 1
+ */
+
+    void setPrescaler(uint8_t prescaler, uint8_t register);
     
+private:
+    char addr;
+    I2C *_i2c;
+
+/**
+ * @brief Set LEDs of one selector register
+ * 
+ * @param state array of the state of the leds to set
+ * @param selector selector to set the register 
+ */
+
+    void setSelectorLEDs(uint8_t state, uint8_t selector);
+
 };
 
 #endif
