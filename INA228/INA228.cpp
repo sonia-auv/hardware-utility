@@ -109,10 +109,15 @@ float_t INA228::getCurrent() // To be reviewed for negation
 {
     uint32_t value;
     readINA228(CURRENT, &value);
-    return (float_t)(value >> 4)*_CURR_LSB;
+    
+    float_t data = (float_t)((value >> 4) & 0x7FFFF);
+    uint8_t sign = (value >> 23) & 0x1;
+    
+    if(sign) -data*_CURR_LSB;
+    return data*_CURR_LSB;
 }
 
-float_t INA228::getPower() // Value weird lower than current
+float_t INA228::getPower()
 {
     uint32_t value;
     readINA228(POWER, &value);
