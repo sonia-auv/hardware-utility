@@ -113,8 +113,8 @@ float_t INA228::getCurrent() // To be reviewed for negation
     float_t data = (float_t)((value >> 4) & 0x7FFFF);
     uint8_t sign = (value >> 23) & 0x1;
     
-    if(sign) -data*_CURR_LSB;
-    return data*_CURR_LSB;
+    if(sign) return -data*_CURR_LSB;
+    else return data*_CURR_LSB;
 }
 
 float_t INA228::getPower()
