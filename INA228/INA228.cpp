@@ -108,14 +108,13 @@ float_t INA228::getDieTemp()
 float_t INA228::getCurrent() // To be reviewed for negation
 {
     uint32_t value;
-    uint32_t data;
     readINA228(CURRENT, &value);
     
     uint8_t sign = (value >> 23) & 0x1;
-    data = (value >> 4) & 0x7FFFF;
+    value = (value >> 4) & 0x7FFFF;
     
-    if(sign) return (float_t)invert_data(data)*_CURR_LSB*-1.0;
-    else return (float_t)data*_CURR_LSB;
+    if(sign) return (float_t)(~value & 0x7FFFF)*_CURR_LSB*-1.0;
+    else return (float_t)value*_CURR_LSB;
 }
 
 float_t INA228::getPower()
@@ -302,16 +301,4 @@ void INA228::readINA228(char cmd, uint64_t *value)
     _i2c->write(_addr,&cmd,1,true);
     _i2c->read(_addr+1,buff,5);
     *value = (buff[0] << 32) | (buff[1] << 24) | (buff[2] << 16) | (buff[4] << 8) | buff[5];
-}
-
-uint32_t invert_data(uint32_t data)
-{
-    uint32_t x;
-    for(auto i = 31; data;)
-    {
-        x |= (n & 1) << i;
-        n >>= 1;
-        --i;
-    }
-    return x;
 }
