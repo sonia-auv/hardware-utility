@@ -111,9 +111,9 @@ float_t INA228::getCurrent() // To be reviewed for negation
     readINA228(CURRENT, &value);
     
     uint8_t sign = (value >> 23) & 0x1;
-    value = (~value >> 4) & 0x7FFFF;
+    value = (value >> 4) & 0x7FFFF;
     
-    if(sign) return (float_t)value*_CURR_LSB*-1.0;
+    if(sign) return (float_t)invert_data(value)*_CURR_LSB*-1.0;
     else return (float_t)value*_CURR_LSB;
 }
 
@@ -301,4 +301,14 @@ void INA228::readINA228(char cmd, uint64_t *value)
     _i2c->write(_addr,&cmd,1,true);
     _i2c->read(_addr+1,buff,5);
     *value = (buff[0] << 32) | (buff[1] << 24) | (buff[2] << 16) | (buff[4] << 8) | buff[5];
+}
+
+uint32_t invert_data(uint32_t data)
+{
+        data = (data >> 1) & 0x55555555 | (data << 1) & 0xaaaaaaaa;
+        data = (data >> 2) & 0x33333333 | (data << 2) & 0xcccccccc;
+        data = (data >> 4) & 0x0f0f0f0f | (data << 4) & 0xf0f0f0f0;
+        data = (data >> 8) & 0x00ff00ff | (data << 8) & 0xff00ff00;
+        data = (data >> 16) & 0x0000ffff | (data << 16) & 0xffff0000;
+        return data;
 }

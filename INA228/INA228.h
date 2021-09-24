@@ -175,6 +175,8 @@ private:
 
     void writeINA228(char cmd, uint64_t reg);
     void readINA228(char cmd, uint64_t *value);
+
+    uint32_t invert_data(uint32_t data);
 };
     
 #endif
