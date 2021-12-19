@@ -60,103 +60,260 @@
  */
 class INA228 {
 public:
-    /** init INA228 class
-     * @param *i2c pointer to I2C serial interface
+    /**
+     * @brief Constructor of the object INA228
+     * 
+     * @param i2c pointer to I2C serial interface
      * @param addr sensor I2C address
      */
     INA228 (I2C* i2c, char addr); 
 
-    /** Set the configuration of the device
+    /**
+     * @brief Set the configuration
+     * 
      * @param reg desired Configure Register bits
      */
     void setConfig (uint16_t reg);
     
-    /** Get device Configuration register
+    /**
+     * @brief Get the Configuration 
+     * 
+     * @return uint16_t Configuration
      */  
     uint16_t getConfig();
     
+    /**
+     * @brief Set the ADC configuration
+     * 
+     * @param reg Desired ADC configuration bits
+     */
     void setConfigADC(uint16_t reg);
 
+    /**
+     * @brief Get the ADC configuration
+     * 
+     * @return uint16_t ADC configuration
+     */
     uint16_t getConfigADC();
 
+    /**
+     * @brief Set the shunt calibration of the current calculation
+     * 
+     * @param reg Value calculated for the shunt calibration
+     */
     void setShuntCal(uint16_t reg);
 
+    /**
+     * @brief Get the Shunt calibration
+     * 
+     * @return uint16_t Value of the shunt calibration
+     */
     uint16_t getShuntCal();
 
+    /**
+     * @brief Set the shunt temperature coefficient for the temperature compensation
+     * 
+     * @param reg The shunt temperature coefficient calculated at 25°C
+     */
     void setTempCo(uint16_t reg);
 
+    /**
+     * @brief Get the shunt temperature coefficient
+     * 
+     * @return uint16_t Value of the shunt temperature coefficient
+     */
     uint16_t getTempCo();
     
-    /** Get the voltage over the shunt
-    */
+    /**
+     * @brief Get the shunt voltage
+     * 
+     * @return float_t Value of the shunt voltage
+     */
     float_t getShuntVolt();
 
-    /** Get the voltage of the bus rail
+    /**
+     * @brief Get the bus voltage
+     * 
+     * @return float_t Value of the bus voltage
      */
     float_t getBusVolt();
 
+    /**
+     * @brief Get the temperature of the die
+     * 
+     * @return float_t Value of the temperature
+     */
     float_t getDieTemp();
     
-    /** Get the current measured through the shunt.
-     * in order to get the current you need to set the shut resistor value first
-     */  
+    /**
+     * @brief Get the current calculated with the drop voltage of the shunt
+     * 
+     * @return float_t Value of the current through the shunt in Amperes
+     */
     float_t getCurrent();
     
+    /**
+     * @brief Get the calculated power
+     * 
+     * @return float_t Value of the power in Watts
+     */
     float_t getPower();
 
+    /**
+     * @brief Get the calculated energy
+     * 
+     * @return float_t Value of the energy in Joules
+     */
     float_t getEnergy();
 
+    /**
+     * @brief Get the calculated charge
+     * 
+     * @return float_t Value of the charge in Coulombs
+     */
     float_t getCharge();
 
+    /**
+     * @brief Set the diagnostic flags and alert
+     * 
+     * @param reg Value of the diagnostic flags register
+     */
     void setAlertFlags(uint16_t reg);
     
+    /**
+     * @brief Get the diagnostic falgs and alert
+     * 
+     * @return uint16_t Value of the register
+     */
     uint16_t getAlertFlags();
 
+    /**
+     * @brief Set the shunt overvoltage threshold
+     * 
+     * @param reg Value of the shunt overvoltage threshold for the register
+     */
     void setSOVL(uint16_t reg);
 
+    /**
+     * @brief Get the shunt overvoltage threshold
+     * 
+     * @return float_t Value of the shunt overvoltage threshold
+     */
     float_t getSOVL();
 
+    /**
+     * @brief Set the shunt undervoltage threshold
+     * 
+     * @param reg Value of the shunt undervoltage threshold for the register
+     */
     void setSUVL(uint16_t reg);
 
+    /**
+     * @brief Get the shunt undervoltage threshold
+     * 
+     * @return float_t Value of the shunt undervoltage threshold
+     */
     float_t getSUVL();
 
+    /**
+     * @brief Set the bus overvoltage threshold
+     * 
+     * @param reg Value of the bus overvoltage threshold for the register
+     */
     void setBOVL(uint16_t reg);
 
+    /**
+     * @brief Get the bus overvoltage threshold
+     * 
+     * @return float_t Value of the bus overvotlage threshold
+     */
     float_t getBOVL();
 
+    /**
+     * @brief Set the bus undervoltage threshold
+     * 
+     * @param reg Value of the undervoltage threshold for the register
+     */
     void setBUVL(uint16_t reg);
 
+    /**
+     * @brief Get the bus undervoltage threshold
+     * 
+     * @return float_t Value of the bus undervoltage threshold
+     */
     float_t getBUVL();
 
+    /**
+     * @brief Set the temperature over-limit threshold
+     * 
+     * @param reg Value of the temperature over-limit threshold for the register
+     */
     void setOverTempLimit(uint16_t reg);
 
+    /**
+     * @brief Get the temperature over-limit threshold
+     * 
+     * @return float_t Value of the temperature over-limit threshold
+     */
     float_t getOverTempLimit();
 
+    /**
+     * @brief Set the power over-limit threshold
+     * 
+     * @param reg Value of the power over-limit threshold for the register
+     */
     void setOverPowerLimit(uint16_t reg);
 
+    /**
+     * @brief Get the power over-limit threshold
+     * 
+     * @return float_t Value of the power over-limit threshold
+     */
     float_t getOverPowerLimit();
 
+    /**
+     * @brief Get the Manufacturer ID
+     * 
+     * @return uint16_t TI in Ascii
+     */
     uint16_t getManufacturer();
     
-    /** Get the unique ID of the device
-    */
+    /**
+     * @brief Get the ID of
+     * 
+     * @return uint16_t Value of the ID
+     */
     uint16_t getID();
     
-    /** Set the shunt resistor
-    *@param val value in ohm
-    */
+    /** 
+     * @brief Set the value for the shunt resistor
+     * 
+     * @param val Value of the shunt resistor in Ohms
+     */
     void setShuntRValue(float_t val);
     
+    /**
+     * @brief Get the value of the shunt value programmed
+     * 
+     * @return float_t Shunt value 
+     */
     float_t getShuntRValue(void);
     
-    /** Set the current LSB for maximum current in decimal
-    */
+    /**
+     * @brief Set the Current LSB for calculation
+     * 
+     * @param val LSB value
+     */
     void setCurrentLSB(float_t val);
 
+    /**
+     * @brief Get the Current LSB
+     * 
+     * @return float_t Current LSB
+     */
     float_t getCurrentLSB();
     
 protected:
-
 
 private:
     char _addr;
@@ -167,13 +324,42 @@ private:
     float_t _ENERGY_LSB;
     float_t _CHARGE_LSB;
     
+    /**
+     * @brief Write uint16_t to the INA228 with I2C
+     * 
+     * @param cmd Command
+     * @param reg Value for the register
+     */
     void writeINA228(char cmd, uint16_t reg);
+
+    /**
+     * @brief Read uint16_t to the INA228 with I2C
+     * 
+     * @param cmd Command
+     * @param value pointer for the value of the register
+     */
     void readINA228(char cmd, uint16_t *value);
 
+    // Not used
     void writeINA228(char cmd, uint32_t reg);
+
+    /**
+     * @brief Read uint32_t to the INA228 with I2C
+     * 
+     * @param cmd Command
+     * @param value pointer for the value of the register
+     */
     void readINA228(char cmd, uint32_t *value);
 
+    // Not used
     void writeINA228(char cmd, uint64_t reg);
+
+    /**
+     * @brief Read uint64_t to the INA228 with I2C
+     * 
+     * @param cmd Command
+     * @param value pointer for the value of the register
+     */
     void readINA228(char cmd, uint64_t *value);
 };
     

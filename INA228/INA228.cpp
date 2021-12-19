@@ -21,7 +21,7 @@
  */
 
 /** @file
- * @brief LTC29990 I2C
+ * @brief INA228 I2C
  */
  
 #include "mbed.h"
