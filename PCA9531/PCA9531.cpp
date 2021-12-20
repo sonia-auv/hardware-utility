@@ -21,6 +21,42 @@ void PCA9531::setLEDs(uint16_t state)
     setSelectorLEDs((state >> 8), LS1);
 }
 
+void PCA9531::setPrescaler(uint8_t prescaler, uint8_t pwm_register)
+{
+    char temp[2];
+
+    if(pwm_register == 1)
+    {
+        temp[0] = PSC1;
+    }
+    else
+    {
+        temp[0] = PSC0;
+    }
+
+    temp[1] = prescaler;
+
+    _i2c->write(addr, temp, 2);
+}
+
+void PCA9531::setDutyCycle(uint8_t duty_cycle, uint8_t pwm_register)
+{
+    char temp[2];
+
+    if(pwm_register == 1)
+    {
+        temp[0] = PWM1;
+    }
+    else
+    {
+        temp[0] = PWM0;
+    }
+
+    temp[1] = duty_cycle;
+
+    _i2c->write(addr, temp, 2);    
+}
+
 void PCA9531::setSelectorLEDs(uint8_t state, uint8_t selector)
 {
     char temp[2];
