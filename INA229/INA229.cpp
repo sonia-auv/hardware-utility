@@ -26,10 +26,10 @@
  
 #include "INA229.h"
 
-INA229::INA229(SPI* spi, PinName cs)
+INA229::INA229(SPI* spi, DigitalOut *cs)
 {
     _spi = spi
-    _cs = DigitalOut(cs);
+    _cs = cs
 
     _ShuntR = 0;
     _CURR_LSB = 0;

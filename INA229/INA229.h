@@ -63,10 +63,10 @@ public:
     /**
      * @brief Constructor of the object INA229
      * 
-     * @param i2c pointer to I2C serial interface
-     * @param addr sensor I2C address
+     * @param spi pointer to spi interface
+     * @param cs pointer to the DigitalOut for the chip select
      */
-    INA229(SPI* spi, PinName cs);
+    INA229(SPI* spi, DigitalOut *cs);
 
     /**
      * @brief Set the configuration
@@ -316,8 +316,9 @@ public:
 protected:
 
 private:
-    DigitalOut _cs;
+
     SPI* _spi;
+    DigitalOut* _cs;
     float_t _ShuntR;
     float_t _CURR_LSB;
     float_t _POWER_LSB;
