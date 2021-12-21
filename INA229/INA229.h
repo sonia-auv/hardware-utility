@@ -66,14 +66,14 @@ public:
      * @param i2c pointer to I2C serial interface
      * @param addr sensor I2C address
      */
-    INA229 (I2C* i2c, char addr); 
+    INA229(SPI* spi, PinName cs);
 
     /**
      * @brief Set the configuration
      * 
      * @param reg desired Configure Register bits
      */
-    void setConfig (uint16_t reg);
+    void setConfig(uint16_t reg);
     
     /**
      * @brief Get the Configuration 
@@ -316,8 +316,8 @@ public:
 protected:
 
 private:
-    char _addr;
-    I2C *_i2c;
+    DigitalOut _cs;
+    SPI* _spi;
     float_t _ShuntR;
     float_t _CURR_LSB;
     float_t _POWER_LSB;

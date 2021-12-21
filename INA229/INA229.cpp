@@ -26,16 +26,16 @@
  
 #include "INA229.h"
 
-INA229::INA229 (I2C* i2c, char addr)
+INA229::INA229(SPI* spi, PinName cs)
 {
-    _i2c = i2c;
-    _addr = addr;
+    _spi = spi
+    _cs = DigitalOut(cs);
 
     _ShuntR = 0;
     _CURR_LSB = 0;
 }
 
-void INA229::setConfig (uint16_t reg)
+void INA229::setConfig(uint16_t reg)
 {
     writeINA229(CONF, reg);
 }    
@@ -261,33 +261,33 @@ float_t INA229::getCurrentLSB()
 
 void INA229::writeINA229(char cmd, uint16_t reg)
 {
-    char buffer[3];
-    buffer[0] = cmd;
-    buffer[1] = (char) ((reg & 0xFF00) >> 8);
-    buffer[2] = (char) (reg & 0x00FF);
-    _i2c->write(_addr,buffer,3);
+    // char buffer[3];
+    // buffer[0] = cmd;
+    // buffer[1] = (char) ((reg & 0xFF00) >> 8);
+    // buffer[2] = (char) (reg & 0x00FF);
+    // _i2c->write(_addr,buffer,3);
 }
 
 void INA229::readINA229(char cmd, uint16_t *value)
 {
-    char buff[2];
-    _i2c->write(_addr,&cmd,1,true);
-    _i2c->read(_addr+1,buff,2);
-    *value = (buff[0] << 8) | buff[1];
+    // char buff[2];
+    // _i2c->write(_addr,&cmd,1,true);
+    // _i2c->read(_addr+1,buff,2);
+    // *value = (buff[0] << 8) | buff[1];
 }
 
 void INA229::readINA229(char cmd, uint32_t *value)
 {
-    char buff[3];
-    _i2c->write(_addr,&cmd,1,true);
-    _i2c->read(_addr+1,buff,3);
-    *value = (buff[0] << 16) | (buff[1] << 8) | buff[2];
+    // char buff[3];
+    // _i2c->write(_addr,&cmd,1,true);
+    // _i2c->read(_addr+1,buff,3);
+    // *value = (buff[0] << 16) | (buff[1] << 8) | buff[2];
 }
 
 void INA229::readINA229(char cmd, uint64_t *value)
 {
-    char buff[5];
-    _i2c->write(_addr,&cmd,1,true);
-    _i2c->read(_addr+1,buff,5);
-    *value = (buff[0] << 32) | (buff[1] << 24) | (buff[2] << 16) | (buff[4] << 8) | buff[5];
+    // char buff[5];
+    // _i2c->write(_addr,&cmd,1,true);
+    // _i2c->read(_addr+1,buff,5);
+    // *value = (buff[0] << 32) | (buff[1] << 24) | (buff[2] << 16) | (buff[4] << 8) | buff[5];
 }
