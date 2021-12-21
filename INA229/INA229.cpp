@@ -28,8 +28,8 @@
 
 INA229::INA229(SPI* spi, DigitalOut *cs)
 {
-    _spi = spi
-    _cs = cs
+    _spi = spi;
+    _cs = cs;
 
     _ShuntR = 0;
     _CURR_LSB = 0;
