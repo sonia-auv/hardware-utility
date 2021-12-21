@@ -262,6 +262,7 @@ float_t INA229::getCurrentLSB()
 void INA229::writeINA229(char cmd, uint16_t reg)
 {
     char buffer[3];
+    char receive[3];
 
     _cs->write(0);
 
@@ -269,26 +270,18 @@ void INA229::writeINA229(char cmd, uint16_t reg)
     buffer[1] = (char) ((reg & 0xFF00) >> 8);
     buffer[2] = (char) (reg & 0x00FF);
     
-    for(uint8_t i = 0; i < 3; ++i)
-    {
-        _spi->write(buffer[i]);
-    }
-
+    _spi->write(buffer, 3, receive, 3);
     _cs->write(1);
 }
 
 void INA229::readINA229(char cmd, uint16_t *value)
 {
+    char send[2] = {0x0, 0x0};
     char buffer[2];
     
     _cs->write(0);
     _spi->write((cmd << 2) + 1);
-
-    for(uint8_t i = 0; i < 2; ++i)
-    {
-        buffer[i] = _spi->write(0x00);
-    }
-    
+    _spi->write(send, 2, buffer, 2);
     _cs->write(1);
 
     *value = (buffer[0] << 8) | buffer[1];
