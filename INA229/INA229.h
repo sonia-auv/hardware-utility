@@ -21,7 +21,7 @@
  */
 
 /** @file
- * @brief INA229 I2C
+ * @brief INA229 SPI
  */
  
 #ifndef INA229_H

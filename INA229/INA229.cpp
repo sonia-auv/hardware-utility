@@ -21,7 +21,7 @@
  */
 
 /** @file
- * @brief INA229 I2C
+ * @brief INA229 SPI
  */
  
 #include "INA229.h"
@@ -261,19 +261,37 @@ float_t INA229::getCurrentLSB()
 
 void INA229::writeINA229(char cmd, uint16_t reg)
 {
-    // char buffer[3];
-    // buffer[0] = cmd;
-    // buffer[1] = (char) ((reg & 0xFF00) >> 8);
-    // buffer[2] = (char) (reg & 0x00FF);
-    // _i2c->write(_addr,buffer,3);
+    char buffer[3];
+
+    _cs->write(0);
+
+    buffer[0] = cmd << 2;
+    buffer[1] = (char) ((reg & 0xFF00) >> 8);
+    buffer[2] = (char) (reg & 0x00FF);
+    
+    for(uint8_t i = 0; i < 3; ++i)
+    {
+        _spi->write(buffer[i]);
+    }
+
+    _cs->write(1);
 }
 
 void INA229::readINA229(char cmd, uint16_t *value)
 {
-    // char buff[2];
-    // _i2c->write(_addr,&cmd,1,true);
-    // _i2c->read(_addr+1,buff,2);
-    // *value = (buff[0] << 8) | buff[1];
+    char buffer[2];
+    
+    _cs->write(0);
+    _spi->write((cmd << 2) + 1);
+
+    for(uint8_t i = 0; i < 2; ++i)
+    {
+        buffer[i] = _spi->write(0x00);
+    }
+    
+    _cs->write(1);
+
+    *value = (buffer[0] << 8) | buffer[1];
 }
 
 void INA229::readINA229(char cmd, uint32_t *value)
