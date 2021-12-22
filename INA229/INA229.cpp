@@ -83,25 +83,35 @@ uint16_t INA229::getTempCo()
     return value;
 }
 
-float_t INA229::getShuntVolt() // To be reviewed for negation
+float_t INA229::getShuntVolt()
 {
     uint32_t value;
     readINA229(VSHUNT, &value);
-    return (float_t)(value >> 4)*SHUNT_LSB;
+
+    uint8_t sign = (value >> 23) & 0x1;
+    value = (value >> 4) & 0x7FFFF;
+
+    if(sign) return (float_t)(~value & 0x7FFFF) * SHUNT_LSB * -1.0;
+    else return (float_t)value * SHUNT_LSB;
 }
 
 float_t INA229::getBusVolt() // To be reviewed for negation
 {
     uint32_t value;
     readINA229(VBUS, &value);
-    return (float_t)(value >> 4)*BUS_LSB;
+
+    uint8_t sign = (value >> 23) & 0x1;
+    value = (value >> 4) & 0x7FFFF;
+
+    if(sign) return (float_t)(~value & 0x7FFFF) * BUS_LSB * -1.0;
+    else return (float_t)value * BUS_LSB;
 }
 
 float_t INA229::getDieTemp()
 {
     uint16_t value;
     readINA229(DIETEMP, &value);
-    return (float_t)value*TEMP_LSB;
+    return (float_t)value * TEMP_LSB;
 }
 
 float_t INA229::getCurrent() // To be reviewed for negation
@@ -112,29 +122,39 @@ float_t INA229::getCurrent() // To be reviewed for negation
     uint8_t sign = (value >> 23) & 0x1;
     value = (value >> 4) & 0x7FFFF;
     
-    if(sign) return (float_t)(~value & 0x7FFFF)*_CURR_LSB*-1.0;
-    else return (float_t)value*_CURR_LSB;
+    if(sign) return (float_t)(~value & 0x7FFFF) * _CURR_LSB * -1.0;
+    else return (float_t)value * _CURR_LSB;
 }
 
 float_t INA229::getPower()
 {
     uint32_t value;
     readINA229(POWER, &value);
-    return (float_t)value*_POWER_LSB;
+    return (float_t)value * _POWER_LSB;
 }
 
 float_t INA229::getEnergy()
 {
     uint64_t value;
     readINA229(ENERGY, &value);
-    return (float_t)value*_ENERGY_LSB;
+
+    uint8_t sign = (value >> 39) & 0x1;
+    value = value & 7FFFFFFFFF;
+
+    if(sign) return (float_t)(~value & 7FFFFFFFFF) * _ENERGY_LSB * -1.0;
+    else return (float_t)value * _ENERGY_LSB;
 }
 
-float_t INA229::getCharge() // To be reviewed for negation
+float_t INA229::getCharge()
 {
     uint64_t value;
     readINA229(CHARGE, &value);
-    return (float_t)value*_CHARGE_LSB;
+
+    uint8_t sign = (value >> 39) & 0x1;
+    value = value & 7FFFFFFFFF;
+
+    if(sign) return (float_t)(~value & 7FFFFFFFFF) * _CHARGE_LSB * -1.0;
+    else return (float_t)value * _CHARGE_LSB;
 }
 
 void INA229::setAlertFlags(uint16_t reg)
@@ -154,11 +174,11 @@ void INA229::setSOVL(uint16_t reg)
     writeINA229(SOVL, reg);
 }
 
-float_t INA229::getSOVL() // Conversion factor
+uint16_t INA229::getSOVL()
 {
     uint16_t value;
     readINA229(SOVL, &value);
-    return (float_t)value*SHUNT_OVER_UNDER_VOLTAGE_LSB;
+    return value;
 }
 
 void INA229::setSUVL(uint16_t reg)
@@ -166,11 +186,11 @@ void INA229::setSUVL(uint16_t reg)
     writeINA229(SUVL, reg);
 }
 
-float_t INA229::getSUVL() // Conversion factor
+uint16_t INA229::getSUVL()
 {
     uint16_t value;
     readINA229(SUVL, &value);
-    return (float_t)value*SHUNT_OVER_UNDER_VOLTAGE_LSB;
+    return value;
 }
 
 void INA229::setBOVL(uint16_t reg)
@@ -178,11 +198,11 @@ void INA229::setBOVL(uint16_t reg)
     writeINA229(BOVL, reg);
 }
 
-float_t INA229::getBOVL() // Conversion factor
+uint16_t INA229::getBOVL()
 {
     uint16_t value;
     readINA229(BOVL, &value);
-    return (float_t)value*BUS_OVER_UNDER_VOLTAGE_LSB;
+    return value;
 }
 
 void INA229::setBUVL(uint16_t reg)
@@ -190,11 +210,11 @@ void INA229::setBUVL(uint16_t reg)
     writeINA229(BUVL, reg);
 }
 
-float_t INA229::getBUVL() // Conversion factor
+uint16_t INA229::getBUVL()
 {
     uint16_t value;
     readINA229(BUVL, &value);
-    return (float_t)value*BUS_OVER_UNDER_VOLTAGE_LSB;
+    return value;
 }
 
 void INA229::setOverTempLimit(uint16_t reg)
@@ -202,11 +222,11 @@ void INA229::setOverTempLimit(uint16_t reg)
     writeINA229(TEMP_LIMIT, reg);
 }
 
-float_t INA229::getOverTempLimit() // Conversion factor
+uint16_t INA229::getOverTempLimit()
 {
     uint16_t value;
     readINA229(TEMP_LIMIT, &value);
-    return (float_t)value;
+    return value;
 }
 
 void INA229::setOverPowerLimit(uint16_t reg)
@@ -214,7 +234,7 @@ void INA229::setOverPowerLimit(uint16_t reg)
     writeINA229(PWR_LIMIT, reg);
 }
 
-float_t INA229::getOverPowerLimit() // Conversion factor
+uint16_t INA229::getOverPowerLimit()
 {
     uint16_t value;
     readINA229(PWR_LIMIT, &value);
@@ -244,7 +264,6 @@ float_t INA229::getShuntRValue(void)
 {
     return _ShuntR;
 }
-
 
 void INA229::setCurrentLSB(float_t val)
 {
