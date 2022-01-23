@@ -42,7 +42,7 @@ class SD_Card
 
     ~SD_Card();
 
-    int8_t initializeSD(bool create_files = False);
+    int8_t initializeSD(bool create_files = false);
     
     int8_t create_file(const char *file_name);
 
