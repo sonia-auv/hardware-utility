@@ -36,11 +36,11 @@ int8_t SD_Card::initializeSD(bool create_files)
         }
     }
 
-    if(create_file)
+    if(create_files)
     {
         for(uint8_t i = 0; i < NB_FILES; ++i)
         {
-            FILE *fd = fopen(FILES[i], "w+");
+            FILE *fd = fopen(array + i, "w+");
             if(fd == NULL)
             {
                 return -EAGAIN;

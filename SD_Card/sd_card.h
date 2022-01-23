@@ -24,7 +24,7 @@
 #define FLAGS_FILE "/sd/monitor/flags.txt"
 
 #define NB_FILES 4
-#define FILES {VOLTAGE_FILE, CURRENT_FILE, TEMPERATURE_FILE, FLAGS_FILE}
+#define MAX_FILES_NAME 256
 
 /**
  * @brief SD _Card Class
@@ -74,6 +74,10 @@ class SD_Card
 
     SDBlockDevice *_sd;
     LittleFileSystem *_fs;
+
+    const char array[NB_FILES][MAX_FILES_NAME] = {VOLTAGE_FILE, CURRENT_FILE, 
+                                                    TEMPERATURE_FILE, FLAGS_FILE};
+
 };
 
 #endif // SD_CARD_H
