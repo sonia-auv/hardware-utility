@@ -37,13 +37,13 @@ class SD_Card
      * 
      * @param sd pointer to the object SDBlockDevice for communication to the sd card
      * @param fs pointer to the object Little file system for writing on the sd card
-     * @param open_files bool open all possible files
-     * @return int8_t 0 for success, others errors
      */
-    int8_t SD_Card(SDBlockDevice *sd, LittleFileSystem *fs, bool open_files = False);
+    SD_Card(SDBlockDevice *sd, LittleFileSystem *fs);
 
-    void ~SD_Card();
+    ~SD_Card();
 
+    int8_t initializeSD(bool create_files = False);
+    
     int8_t create_file(const char *file_name);
 
     /**
