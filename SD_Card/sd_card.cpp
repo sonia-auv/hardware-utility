@@ -40,7 +40,8 @@ int8_t SD_Card::initializeSD(bool create_files)
     {
         for(uint8_t i = 0; i < NB_FILES; ++i)
         {
-            FILE *fd = fopen(array + i, "w+");
+            const char *file_to_open = *(array + i);
+            FILE *fd = fopen(file_to_open, "x");
             if(fd == NULL)
             {
                 return -EAGAIN;
@@ -48,11 +49,24 @@ int8_t SD_Card::initializeSD(bool create_files)
             fclose(fd);
         }
     }
+    return 0;
 }
 
 int8_t SD_Card::create_file(const char *file_name)
 {
+    if(_file_opened != NULL)
+    {
+        fclose(_file_opened);
+    }
+    _file_opened = fopen(file_name, "x");
 
+    if(_file_opened == NULL)
+    {
+        return -EAGAIN;
+    }
+    fclose(_file_opened);
+    return 0;
+    
 }
 
 int8_t SD_Card::write_to_SD(const char *file_name ,char *data, size_t size)

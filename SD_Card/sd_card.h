@@ -74,6 +74,7 @@ class SD_Card
 
     SDBlockDevice *_sd;
     LittleFileSystem *_fs;
+    FILE *_file_opened;
 
     const char array[NB_FILES][MAX_FILES_NAME] = {VOLTAGE_FILE, CURRENT_FILE, 
                                                     TEMPERATURE_FILE, FLAGS_FILE};
