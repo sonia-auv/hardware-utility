@@ -18,10 +18,13 @@
 #include <stdio.h>
 #include <errno.h>
 
-#define VOLTAGE_FILE "/monitor/voltage.txt"
-#define CURRENT_FILE "/monitor/current.txt"
-#define TEMPERATURE_FILE "/monitor/temperature.txt"
-#define FLAGS_FILE "/monitor/flags.txt"
+#define VOLTAGE_FILE "/sd/monitor/voltage.txt"
+#define CURRENT_FILE "/sd/monitor/current.txt"
+#define TEMPERATURE_FILE "/sd/monitor/temperature.txt"
+#define FLAGS_FILE "/sd/monitor/flags.txt"
+
+#define NB_FILES 4
+#define FILES {VOLTAGE_FILE, CURRENT_FILE, TEMPERATURE_FILE, FLAGS_FILE}
 
 /**
  * @brief SD _Card Class

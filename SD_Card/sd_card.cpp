@@ -24,7 +24,30 @@ SD_Card::~SD_Card()
 
 int8_t SD_Card::initializeSD(bool create_files)
 {
+    int error = _fs->mount(_sd);
 
+    if(error < 0)
+    {
+        error = _fs->reformat(_sd);
+
+        if(error < 0)
+        {        
+            return -ENODEV;
+        }
+    }
+
+    if(create_file)
+    {
+        for(uint8_t i = 0; i < NB_FILES; ++i)
+        {
+            FILE *fd = fopen(FILES[i], "w+");
+            if(fd == NULL)
+            {
+                return -EAGAIN;
+            }
+            fclose(fd);
+        }
+    }
 }
 
 int8_t SD_Card::create_file(const char *file_name)
