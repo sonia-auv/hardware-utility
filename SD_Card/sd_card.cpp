@@ -19,7 +19,7 @@ SD_Card::SD_Card(SDBlockDevice *sd, LittleFileSystem *fs)
 
 SD_Card::~SD_Card()
 {
-    _fs->unmount(_sd);
+    _fs->unmount();
 }
 
 int8_t SD_Card::initializeSD(bool create_files)
