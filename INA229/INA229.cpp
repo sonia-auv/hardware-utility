@@ -139,9 +139,9 @@ float_t INA229::getEnergy()
     readINA229(ENERGY, &value);
 
     uint8_t sign = (value >> 39) & 0x1;
-    value = value & 7FFFFFFFFF;
+    value = value & 0x7FFFFFFFFF;
 
-    if(sign) return (float_t)(~value & 7FFFFFFFFF) * _ENERGY_LSB * -1.0;
+    if(sign) return (float_t)(~value & 0x7FFFFFFFFF) * _ENERGY_LSB * -1.0;
     else return (float_t)value * _ENERGY_LSB;
 }
 
@@ -151,9 +151,9 @@ float_t INA229::getCharge()
     readINA229(CHARGE, &value);
 
     uint8_t sign = (value >> 39) & 0x1;
-    value = value & 7FFFFFFFFF;
+    value = value & 0x7FFFFFFFFF;
 
-    if(sign) return (float_t)(~value & 7FFFFFFFFF) * _CHARGE_LSB * -1.0;
+    if(sign) return (float_t)(~value & 0x7FFFFFFFFF) * _CHARGE_LSB * -1.0;
     else return (float_t)value * _CHARGE_LSB;
 }
 
@@ -174,7 +174,7 @@ void INA229::setSOVL(uint16_t reg)
     writeINA229(SOVL, reg);
 }
 
-uint16_t INA229::getSOVL()
+float_t INA229::getSOVL()
 {
     uint16_t value;
     readINA229(SOVL, &value);
@@ -186,7 +186,7 @@ void INA229::setSUVL(uint16_t reg)
     writeINA229(SUVL, reg);
 }
 
-uint16_t INA229::getSUVL()
+float_t INA229::getSUVL()
 {
     uint16_t value;
     readINA229(SUVL, &value);
@@ -198,7 +198,7 @@ void INA229::setBOVL(uint16_t reg)
     writeINA229(BOVL, reg);
 }
 
-uint16_t INA229::getBOVL()
+float_t INA229::getBOVL()
 {
     uint16_t value;
     readINA229(BOVL, &value);
@@ -210,7 +210,7 @@ void INA229::setBUVL(uint16_t reg)
     writeINA229(BUVL, reg);
 }
 
-uint16_t INA229::getBUVL()
+float_t INA229::getBUVL()
 {
     uint16_t value;
     readINA229(BUVL, &value);
@@ -222,7 +222,7 @@ void INA229::setOverTempLimit(uint16_t reg)
     writeINA229(TEMP_LIMIT, reg);
 }
 
-uint16_t INA229::getOverTempLimit()
+float_t INA229::getOverTempLimit()
 {
     uint16_t value;
     readINA229(TEMP_LIMIT, &value);
@@ -234,7 +234,7 @@ void INA229::setOverPowerLimit(uint16_t reg)
     writeINA229(PWR_LIMIT, reg);
 }
 
-uint16_t INA229::getOverPowerLimit()
+float_t INA229::getOverPowerLimit()
 {
     uint16_t value;
     readINA229(PWR_LIMIT, &value);
