@@ -70,8 +70,6 @@ class SD_Card
 
     private:
 
-
-
     SDBlockDevice *_sd;
     LittleFileSystem *_fs;
     FILE *_file_opened;
