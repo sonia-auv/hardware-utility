@@ -10,6 +10,7 @@
 #define SLAVE_ESC 5
 #define SLAVE_IO 6
 #define SLAVE_STATE_SCREEN 7
+#define SLAVE_PWR_MANAGEMENT 8
 
 //###################################################
 //              CMD DEFINITION
