@@ -23,6 +23,7 @@
 // define backplane/PSU
 #define CMD_VOLTAGE 0
 #define CMD_CURRENT 1
+#define CMD_TEMPERATURE 2
 
 // define backplane/ESC
 #define CMD_READ_MOTOR 15
