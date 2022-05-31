@@ -24,7 +24,7 @@ RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, co
     te = new DigitalOut(RS485_TE_PIN, te_value);
     de = new DigitalOut(RS485_DE_PIN, 0);
 
-    rs485->set_flow_control(Disabled);
+    rs485->set_flow_control(Disabled, NC, NC);
     this->board_adress = board_address;
     this->prefered_sleep_time = prefered_sleep_time;
     this->packet_array_size = packet_array_size;
