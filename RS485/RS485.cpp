@@ -25,14 +25,14 @@ RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, co
     de = new DigitalOut(RS485_DE_PIN, 0);
 
     rs485->set_flow_control(mbed::SerialBase::Disabled, NC, NC);
-    rs485->setBlocking(true);
+    rs485->set_blocking(true);
     this->board_adress = board_address;
     this->prefered_sleep_time = prefered_sleep_time;
     this->packet_array_size = packet_array_size;
 
     packet_array = (RS485_reader_message*)malloc(sizeof(RS485_reader_message)*packet_array_size);
 
-    readThread.start(this, &RS485::read_thread);
+    readThread.start(callback(this, &RS485::read_thread));
     readThread.set_priority(osPriorityBelowNormal);
 }
 
