@@ -19,12 +19,13 @@
 
 RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, const uint8_t packet_array_size, const uint8_t te_value)
 {
-    rs485 = new RawSerial(RS485_TX_PIN, RS485_RX_PIN, 115200);
+    rs485 = new UnbufferedSerial(RS485_TX_PIN, RS485_RX_PIN, 115200);
     re = new DigitalOut(RS485_RE_PIN, 0);
     te = new DigitalOut(RS485_TE_PIN, te_value);
     de = new DigitalOut(RS485_DE_PIN, 0);
 
     rs485->set_flow_control(mbed::SerialBase::Disabled, NC, NC);
+    rs485->setBlocking(true);
     this->board_adress = board_address;
     this->prefered_sleep_time = prefered_sleep_time;
     this->packet_array_size = packet_array_size;
@@ -134,7 +135,7 @@ void RS485::write(const uint8_t slave, const uint8_t cmd, const uint8_t nb_byte,
     serial_write((uint8_t)(checksum >> 8));
     serial_write((uint8_t)(checksum & 0xFF));
     serial_write(0x0D);
-    ThisThread::sleep_for(20);
+    ThisThread::sleep_for(20ms);
     de->write(0);
     writer_mutex.unlock();
 }
@@ -171,12 +172,13 @@ void RS485::send_packet()
 
 uint8_t RS485::serial_read()
 {
+    uint8_t data;
     while(1)
     {
         if(rs485->readable())
         {
-            return rs485->getc();
-            break;
+            rs485->read(&data, 1);
+            return data;
         }
         else
         {
@@ -194,7 +196,7 @@ void RS485::serial_write(const uint8_t data)
     {
         if(rs485->writeable())
         {
-            if(rs485->putc(data) != -1)
+            if(rs485->write(&data, 1) != -1)
             {
                 break;
             }

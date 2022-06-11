@@ -78,7 +78,7 @@ class RS485
          * 
          * @return the slave id
          */
-        uint8_t RS485::getBoardAdress();
+        uint8_t getBoardAdress();
     
     private:
 
@@ -97,7 +97,7 @@ class RS485
         uint8_t packet_array_size;
         uint32_t prefered_sleep_time;
 
-        RawSerial* rs485;
+        UnbufferedSerial* rs485;
         DigitalOut* re;
         DigitalOut* te;
         DigitalOut* de;
