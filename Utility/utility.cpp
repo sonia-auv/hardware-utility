@@ -67,7 +67,7 @@ void isAliveThread(RS485* rs)
 
     while(true)
     {
-        rs.read(cmd_array, 1, buffer);
-        rs.write(rs.getBoardAdress(), cmd_array, 1, buffer);
+        rs->read(cmd_array, 1, buffer);
+        rs->write(rs->getBoardAdress(), cmd_array, 1, buffer);
     }
 }
