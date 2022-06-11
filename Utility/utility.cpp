@@ -55,7 +55,7 @@ double_t readfromAnalog(AnalogIn input, double_t voltageRef, double_t R1, double
     for(i = 0; i < 10; ++i)
     {
       voltage_battery += calcul_tension(input.read(), voltageRef, R1, R2);
-      ThisThread::sleep_for(20);
+      ThisThread::sleep_for(20ms);
     }
     return voltage_battery / (double_t)i;
 }
