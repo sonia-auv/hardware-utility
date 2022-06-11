@@ -57,6 +57,6 @@ double_t readfromAnalog(AnalogIn input, double_t voltageref, double_t R1, double
  * 
  * @param rs
  */
-void isAliveThread(RS485* rs)
+void isAliveThread(RS485* rs);
 
 #endif 
