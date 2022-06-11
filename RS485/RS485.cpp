@@ -139,6 +139,11 @@ void RS485::write(const uint8_t slave, const uint8_t cmd, const uint8_t nb_byte,
     writer_mutex.unlock();
 }
 
+uint8_t RS485::getBoardAdress()
+{
+    return board_adress;
+}
+
 //###################################################
 //
 // PRIVATE FUNCTION

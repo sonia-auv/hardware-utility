@@ -46,7 +46,15 @@ float_t putCharInFloat(char * data, float_t multiplicator = 1);
  * @param voltageref Reference voltage of the board
  * @return double_t Out value of the average
  */
-
 double_t readfromAnalog(AnalogIn input, double_t voltageref, double_t R1, double_t R2);
+
+/**
+ * @brief thread to detect if the board is alive
+ * 
+ * Thread that wait for a is alive packet and return is alive to the master  
+ * 
+ * @param rs
+ */
+void isAliveThread(RS485* rs)
 
 #endif 
