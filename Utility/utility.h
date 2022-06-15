@@ -1,6 +1,8 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
+#include "RS485/RS485_definition.h"
+#include "RS485/RS485.h"
 #include "mbed.h"
 
 /**
