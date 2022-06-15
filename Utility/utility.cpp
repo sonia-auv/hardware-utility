@@ -6,6 +6,8 @@
  * 
  ***/
 
+#include "RS485/RS485_definition.h"
+#include "RS485/RS485.h"
 #include "utility.h"
 
 float_t calcul_tension(double_t value, double_t voltageRef, double_t R1, double_t R2)
@@ -67,7 +69,7 @@ void isAliveThread(RS485* rs)
 
     while(true)
     {
-        rs.read(cmd_array, 1, buffer);
-        rs.write(rs.getBoardAdress(), cmd_array, 1, buffer);
+        rs->read(cmd_array, 1, buffer);
+        rs->write(rs->getBoardAdress(), MD_IS_ALIVE, 0, buffer);
     }
 }
