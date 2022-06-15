@@ -78,7 +78,7 @@ class RS485
          * 
          * @return the slave id
          */
-        uint8_t RS485::getBoardAdress();
+        uint8_t getBoardAdress();
     
     private:
 
