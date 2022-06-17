@@ -31,7 +31,7 @@ RS485::RS485(const uint8_t board_address, const uint32_t prefered_sleep_time, co
 
     packet_array = (RS485_reader_message*)malloc(sizeof(RS485_reader_message)*packet_array_size);
 
-    readThread.start(this, &RS485::read_thread);
+    readThread.start(callback(this, &RS485::read_thread));
     readThread.set_priority(osPriorityBelowNormal);
 }
 
@@ -137,6 +137,11 @@ void RS485::write(const uint8_t slave, const uint8_t cmd, const uint8_t nb_byte,
     ThisThread::sleep_for(20);
     de->write(0);
     writer_mutex.unlock();
+}
+
+uint8_t RS485::getBoardAdress()
+{
+    return board_adress;
 }
 
 //###################################################

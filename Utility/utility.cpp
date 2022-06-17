@@ -2,7 +2,7 @@
  * 
  * Author : Francis Alonzo
  * 
- * Utilities for power supply
+ * Utilities for multiple boards
  * 
  ***/
 
@@ -58,4 +58,16 @@ double_t readfromAnalog(AnalogIn input, double_t voltageRef, double_t R1, double
       ThisThread::sleep_for(20);
     }
     return voltage_battery / (double_t)i;
+}
+
+void isAliveThread(RS485* rs)
+{
+    uint8_t cmd_array[1]={CMD_IS_ALIVE};
+    uint8_t buffer[255]={0};
+
+    while(true)
+    {
+        rs->read(cmd_array, 1, buffer);
+        rs->write(rs->getBoardAdress(), CMD_IS_ALIVE, 0, buffer);
+    }
 }

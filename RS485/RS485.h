@@ -72,6 +72,13 @@ class RS485
          * @param data_buffer the buffer of the data to be send
          */
         void write(const uint8_t slave, const uint8_t cmd, const uint8_t nb_byte, const uint8_t* data_buffer);
+
+        /**
+         * @brief getter to have the slave id of the current board
+         * 
+         * @return the slave id
+         */
+        uint8_t getBoardAdress();
     
     private:
 

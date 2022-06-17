@@ -37,6 +37,9 @@
 #define CMD_IO_ARM_ACTION 3
 #define CMD_IO_LEAK_SENSOR 4
 
+// COMMON DEFINITION
+#define CMD_IS_ALIVE 30
+
 //###################################################
 //              DATA DEFINITION
 //###################################################
