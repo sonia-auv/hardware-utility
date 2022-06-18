@@ -23,6 +23,7 @@
 // define backplane/PSU
 #define CMD_VOLTAGE 0
 #define CMD_CURRENT 1
+#define CMD_TEMPERATURE 2
 
 // define backplane/ESC
 #define CMD_READ_MOTOR 15
@@ -35,6 +36,9 @@
 #define CMD_IO_TORPEDO_ACTION  2
 #define CMD_IO_ARM_ACTION 3
 #define CMD_IO_LEAK_SENSOR 4
+
+// COMMON DEFINITION
+#define CMD_IS_ALIVE 30
 
 //###################################################
 //              DATA DEFINITION
