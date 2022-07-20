@@ -60,7 +60,7 @@ double_t readfromAnalog(AnalogIn input, double_t voltageRef, double_t R1, double
     return voltage_battery / (double_t)i;
 }
 
-void isAliveThread(RS485* rs)
+void isAliveThread(RS485* rs, Watchdog* optional_watchdog = nullptr)
 {
     uint8_t cmd_array[1]={CMD_IS_ALIVE};
     uint8_t buffer[255]={0};
@@ -68,6 +68,10 @@ void isAliveThread(RS485* rs)
     while(true)
     {
         rs->read(cmd_array, 1, buffer);
+        if(optional_watchdog != nullptr)
+        {
+            optional_watchdog.kick();
+        }
         rs->write(rs->getBoardAdress(), CMD_IS_ALIVE, 0, buffer);
     }
 }
