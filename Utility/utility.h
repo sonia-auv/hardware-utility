@@ -57,6 +57,15 @@ double_t readfromAnalog(AnalogIn input, double_t voltageref, double_t R1, double
  * 
  * @param rs
  */
-void isAliveThread(RS485* rs, bool optional_watchdog = false);
+void isAliveThread(RS485* rs);
+
+/**
+ * @brief thread to detect if the board is alive
+ * 
+ * Thread that wait for a is alive packet and return is alive to the master. This thread also kick the watchdog
+ * 
+ * @param rs
+ */
+void isAliveThreadWithWatchdog(RS485* rs);
 
 #endif 
